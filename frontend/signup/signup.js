@@ -16,6 +16,7 @@ async function signup(event){
     const response=await axios.post(API_URL,{name,email,password});
     alert("Signup successful!");
     event.target.reset();
+    window.location.href="/frontend/expense/expense.html";
   } catch (error) {
     const msg=error.response?.data?.message || "Signup failed.";
     alert(msg);

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded',loadExpenses);
+
 const API_URL="http://localhost:3000/expenses";
 
 async function handleSubmitForm(event){
@@ -7,9 +8,10 @@ async function handleSubmitForm(event){
   const amount=event.target.amount.value;
   const description=event.target.description.value;
   const category=event.target.category.value;
-
+  
   try {
-    const response=await axios.post(API_URL,{amount,description,category});
+    const token  = localStorage.getItem('token')
+    const response=await axios.post(API_URL,{amount,description,category},{headers:{"Authorization":token}});
     displayExpense(response.data.expense);
     alert('Expenses added successfully');
     event.target.reset();
@@ -21,12 +23,12 @@ async function handleSubmitForm(event){
 
 async function loadExpenses(){
   try {
-    const response=await axios.get(API_URL);
-    if (Array.isArray(response.data.expense)) {
-      response.data.expense.forEach(displayExpense);
-    } else {
-      console.error('Expected array but got:', response.data.expense);
-    }
+    const token  = localStorage.getItem('token');
+    console.log("Sending token:", token);
+    const response=await axios.get(API_URL,{headers:{"Authorization":token}})
+     response.data.expenses.forEach(expense => {
+      displayExpense(expense);
+    });
   } catch (error) {
     console.error(error);
     alert('Failed to fetch expenses');
@@ -37,15 +39,23 @@ function displayExpense(expense){
   const list = document.getElementById('expense-list');
   const li = document.createElement('li');
   li.id = `expense-${expense.id}`;
-  li.innerHTML = `₹${expense.amount} - ${expense.description} - ${expense.category}<button onclick="deleteExpense(${expense.id})">Delete</button>`;
+  li.classList.add('mb-2');
+  li.innerHTML = `₹${expense.amount} - ${expense.description} - ${expense.category}<button class="btn btn-danger btn-sm ms-2" onclick="deleteExpense(${expense.id})">Delete</button>`;
   list.appendChild(li);
  }
 
- async function deleteExpense(id){
+ async function deleteExpense(id) {
+  if (!id) {
+    console.error('Invalid expense ID:', id);
+    return;
+  }
   try {
-    await axios.delete(`${API_URL}/${id}`);
-    document.getElementById(`expense-${id}`).remove();
-    alert('Expense deleted!');
+    const token  = localStorage.getItem('token');
+    const response=await axios.delete(`${API_URL}/${id}`,{headers:{"Authorization":token}});
+    if (response.status === 200) {
+      document.getElementById(`expense-${id}`).remove();
+      alert('Expense deleted!');
+    }
   } catch (error) {
     alert('Failed to delete expense');
     console.error(error);

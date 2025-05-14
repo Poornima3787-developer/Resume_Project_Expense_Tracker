@@ -5,13 +5,5 @@ const sequelize=new Sequelize('expense_db','root','Poornima@3787',{
   dialect:'mysql'
 });
 
-(async()=>{
-  try{
-    await sequelize.authenticate();
-    console.log("Connection to the database has been created")
-  }catch(error){
-    console.log(error);
-  }
-})();
 
 module.exports=sequelize;

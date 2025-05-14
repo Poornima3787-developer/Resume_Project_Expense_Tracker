@@ -11,7 +11,7 @@
 <body>
   <div class="container mt-4">
     <h2>Expense Tracker</h2>
-    <form id="expense-form" onsubmit="handleSubmitForm(event)">
+    <form id="expense-form" onsubmit="handleSubmitForm(event)" >
       <div class="form-group mb-3">
         <label for="amount">Choose expense amount:</label>
         <input type="number" class="form-control" id="amount" required />
@@ -28,14 +28,14 @@
           <option value="electricity">Electricity</option>
           <option value="food">Food</option>
           <option value="vacation">Vacation</option>
-          <option value="grocessaries">Grocessaries</option>
+          <option value="groceries">Groceries</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">Add Expense</button>
-    </form> 
-    <ul id="expense-list"></ul>
+            <button type="submit" class="btn btn-primary">Add Expense</button>
+    </form>
+    <ul id="expense-list"></ul> 
   </div>
-</body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script defer src="expense.js"></script>
+</body>
 </html>

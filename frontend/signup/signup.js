@@ -15,8 +15,12 @@ async function signup(event){
   try {
     const response=await axios.post(API_URL,{name,email,password});
     alert("Signup successful!");
+    if(response.status === 201){
+                window.location.href = "/frontend/expense/expense.html"// change the page on successful login
+            } else {
+                throw new Error('Failed to login')
+            }
     event.target.reset();
-    window.location.href="/frontend/expense/expense.html";
   } catch (error) {
     const msg=error.response?.data?.message || "Signup failed.";
     alert(msg);

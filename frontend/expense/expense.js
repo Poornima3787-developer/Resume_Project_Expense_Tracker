@@ -1,3 +1,5 @@
+const { Cashfree } = require("cashfree-pg");
+
 document.addEventListener('DOMContentLoaded',loadExpenses);
 
 const API_URL="http://localhost:3000/expenses";
@@ -61,3 +63,28 @@ function displayExpense(expense){
     console.error(error);
   }
  }
+
+document.getElementById("buyPremiumBtn").addEventListener("click",async ()=>{
+  try {
+    const token=localStorage.getItem("token");
+    const res=await axios.post("/purchase/premium",{},{
+      headers: { "Authorization": token }
+    });
+    const cashfree=new Cashfree(res.data.paymentSessionId);
+    cashfree.redirect();
+  } catch (error) {
+    alert("Something went wrong while initiating payment.");
+    console.error(error);
+  }
+})
+
+window.onload=function(){
+  const token=localStorage.getItem("token");
+  if(token){
+    const decoded=JSON.parse(atob(token.split('.')[1]));
+    if (decoded.isPremium) {
+      document.getElementById("premium-msg").textContent = "You are a premium user now";
+      document.getElementById("buyPremiumBtn").style.display = "none";
+    }
+  }
+}

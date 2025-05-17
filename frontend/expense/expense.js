@@ -1,4 +1,6 @@
-const { Cashfree } = require("cashfree-pg");
+const cashfree = Cashfree({
+  mode: "sandbox",
+});
 
 document.addEventListener('DOMContentLoaded',loadExpenses);
 
@@ -26,11 +28,16 @@ async function handleSubmitForm(event){
 async function loadExpenses(){
   try {
     const token  = localStorage.getItem('token');
+    const isPremium = localStorage.getItem("isPremium");
     console.log("Sending token:", token);
     const response=await axios.get(API_URL,{headers:{"Authorization":token}})
      response.data.expenses.forEach(expense => {
       displayExpense(expense);
     });
+    if (isPremium === "true") {
+  document.getElementById("premium-msg").innerText = "You are a premium user";
+  document.getElementById("payBtn").style.display = "none";
+}
   } catch (error) {
     console.error(error);
     alert('Failed to fetch expenses');
@@ -64,27 +71,43 @@ function displayExpense(expense){
   }
  }
 
-document.getElementById("buyPremiumBtn").addEventListener("click",async ()=>{
-  try {
-    const token=localStorage.getItem("token");
-    const res=await axios.post("/purchase/premium",{},{
-      headers: { "Authorization": token }
-    });
-    const cashfree=new Cashfree(res.data.paymentSessionId);
-    cashfree.redirect();
-  } catch (error) {
-    alert("Something went wrong while initiating payment.");
-    console.error(error);
-  }
-})
+ function showPremiumuserMessage(){
+  document.getElementById('rzp-button1').style.visibility="hidden"
+  document.getElementById('message').innerHTML="You are a premium user"
+ }
 
-window.onload=function(){
-  const token=localStorage.getItem("token");
-  if(token){
-    const decoded=JSON.parse(atob(token.split('.')[1]));
-    if (decoded.isPremium) {
-      document.getElementById("premium-msg").textContent = "You are a premium user now";
-      document.getElementById("buyPremiumBtn").style.display = "none";
+ document.getElementById('payBtn').addEventListener("click",async()=>{
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post("http://localhost:3000/pay", {
+      headers: { Authorization: token }
+    });
+    const paymentSessionId = response.data.paymentSessionId;
+    const orderId = response.data.orderId;
+     if (typeof cashfree === 'undefined') {
+        throw new Error("Cashfree SDK not loaded");
+      }
+   let checkoutOptions = {
+  paymentSessionId: paymentSessionId,
+  redirectTarget: "_self",
+  };
+  const result=await cashfree.checkout(checkoutOptions);
+     if (result.paymentDetails) {
+      const statusResponse = await axios.get(
+        `http://localhost:3000/payment-status/${orderId}`
+      );
+
+      const status = statusResponse.data.orderStatus;
+      alert("Payment status: " + status);
+      if (status === "PAID") {
+        localStorage.setItem("isPremium", "true");
+        document.getElementById("premium-msg").innerText = "You are a premium user";
+      }
     }
+
+  } catch (error) {
+    console.error("Payment failed:", error);
+    alert("Payment failed");
   }
-}
+ })
+  

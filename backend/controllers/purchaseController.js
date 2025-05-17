@@ -40,9 +40,14 @@ exports.getPaymentStatus= async(req,res)=>{
     const {orderId}=req.params;
     const status=await cashfreeService.getPaymentStatus(orderId);
     const order=await Order.findOne({where:{orderId}});
-    if(order){
+    if(order&&status=="PAID"){
       order.status=status;
       await order.save();
+      const user = await User.findByPk(order.userId);
+  if (user && !user.isPremium) {
+    user.isPremium = true;
+    await user.save();
+  }
     }
      res.json({ orderStatus: status });
   } catch (error) {

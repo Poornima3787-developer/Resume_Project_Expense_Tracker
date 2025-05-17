@@ -9,6 +9,7 @@ const expenseRoutes=require('./routes/expenseRoutes');
 const purchaseRoutes=require('./routes/purchaseRoutes');
 const User=require('./models/user');
 const Expense=require('./models/expense');
+const Order=require('./models/order')
 const cors=require('cors');
 
 const app=express();
@@ -23,10 +24,10 @@ app.use('/',purchaseRoutes);
 User.hasMany(Expense);
 Expense.belongsTo(User);
 
-/*User.hasMany(Order);
-Order.belongsTo(User);*/
+User.hasMany(Order);
+Order.belongsTo(User);
 
-sequelize.sync({force:true})
+sequelize.sync()
     .then(() => {
         app.listen(3000, () => {
             console.log('Server running on port 3000');

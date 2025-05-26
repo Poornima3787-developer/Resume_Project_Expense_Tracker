@@ -2,10 +2,10 @@ const Expense=require('../models/expense');
 
 const getExpenses=async (req ,res)=>{
   try {
-     console.log("📥 Inside GET /expenses");
+     console.log(" Inside GET /expenses");
     console.log("User from token:", req.user);
     const expenses=await Expense.findAll({where:{UserId:req.user.id}})
-    console.log('Expenses fetched for user:', req.user.userId, expenses);
+    console.log('Expenses fetched for user:', req.user.id, expenses);
     res.status(200).json({success: true ,expenses});
   } catch (error) {
     console.error('Error in getExpenses:', error);
@@ -21,7 +21,7 @@ const addExpenses=async (req ,res)=>{
   try {
     const newExpense=await Expense.create({amount,description,category,UserId:req.user.id});
     
-console.log("Saved expense >>>", newExpense.toJSON());
+    console.log("Saved expense >>>", newExpense.toJSON());
      res.status(201).json({ message: 'Expense added', expense: newExpense });
   } catch (error) {
      console.error('Error adding expense:', error);

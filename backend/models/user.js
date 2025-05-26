@@ -20,7 +20,11 @@ const User=sequelize.define('User',{
   password:{
     type:DataTypes.STRING,
     allowNull:false
-  }
+  },
+  isPremium: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: false,
+}
 });
 
 module.exports=User;

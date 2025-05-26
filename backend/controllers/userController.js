@@ -1,9 +1,10 @@
+require('dotenv').config();
 const User=require('../models/user');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
 function generateAccessToken(id,name){
-  return jwt.sign({userId:id,name:name},'secretKeysecretKey');
+  return jwt.sign({userId:id,name:name},process.env.TOKEN_SECRET,{ expiresIn: '12h' });
 }
 
 const userSignup = async (req, res) => {
@@ -17,7 +18,7 @@ const userSignup = async (req, res) => {
     
     const saltRounds=10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-   await User.create({ name, email, password: hashedPassword });
+  await User.create({ name, email, password: hashedPassword });
    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
     console.error('SignUp error:', error);
@@ -39,8 +40,12 @@ const userLogin = async (req ,res) =>{
      if (!isMatch) {
   return res.status(401).json({ message: 'User not authorized' });
 }
-return res.status(200).json({ message: 'User login successful', token: generateAccessToken(user.id, user.name) }) 
+    const token = generateAccessToken(user.id, user.name);
 
+return res.status(200).json({
+      message: 'User login successful',
+      token: token
+    });
    } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({ message: 'Internal server error' });
@@ -51,5 +56,5 @@ return res.status(200).json({ message: 'User login successful', token: generateA
 module.exports={
   userSignup,
   userLogin,
-  generateAccessToken
+  generateAccessToken,
 }

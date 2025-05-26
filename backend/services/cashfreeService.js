@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/../.env' });
+require('dotenv').config();
 
 const axios = require('axios');
 
@@ -30,9 +30,7 @@ exports.createOrder = async (orderId, orderAmount, orderCurrency = 'INR', custom
       order_expiry_time: new Date(Date.now() + 60*60*1000).toISOString(),
     };
 
-    const { data } = await axios.post(
-      `${CF_BASE}/orders`,
-      payload,
+    const { data } = await axios.post(`${CF_BASE}/orders`,payload,
       { headers: HEADERS }
     );
     return data.payment_session_id || data.payment_link;
@@ -48,12 +46,16 @@ exports.getPaymentStatus = async (orderId) => {
       `${CF_BASE}/orders/${orderId}/payments`,
       { headers: HEADERS }
     );
+     if (!data?.payments?.length) return 'PENDING';
+    const latestPayment = data.payments[data.payments.length - 1]; 
+   const statusMap = {
+      'SUCCESS': 'PAID',
+      'PENDING': 'PENDING',
+      'FAILED': 'FAILED',
+      'USER_DROPPED': 'FAILED' 
+    };
 
-    // Depending on API version:
-    const status = data.sub_orders?.[0]?.payment_status || data.payment_status;
-    if (status === 'SUCCESS') return 'SUCCESS';
-    if (status === 'PENDING') return 'PENDING';
-    return 'FAILED';
+   return statusMap[latestPayment.payment_status] || 'FAILED';
   } catch (err) {
     console.error('Error fetching order status:', err.response?.data || err.message);
     throw err;

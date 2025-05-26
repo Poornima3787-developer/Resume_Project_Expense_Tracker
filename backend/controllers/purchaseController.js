@@ -1,25 +1,31 @@
 require('dotenv').config();
 const Order=require('../models/order');
+const User=require('../models/user');
 const cashfreeService=require('../services/cashfreeService');
 
 exports.createOrder=async (req ,res) =>{
   try {
-    const userId=req.user?.id||1;
+     console.log("User info from req.user:", req.user);
+    if (!req.user || !req.user.id) {
+  return res.status(401).json({ message: 'User not authenticated' });
+}
+     const UserId = req.user.id;
     const orderId='order_'+Date.now();
-    const customerPhone="9999999999";
-    const orderAmount = 1.00;
+    const customerPhone=req.user.phone||"9999999999";
+    const orderAmount = req.body.amount||1.00;
+    const customerID = req.user.id.toString();
 
     const paymentSessionId=await cashfreeService.createOrder(
       orderId,
       orderAmount,
-      "INR",
-      userId.toString(),
-      customerPhone
-    );
+      'INR',
+      customerID,
+      customerPhone,
+  );
 
     await Order.create({
       orderId,
-      userId,
+      UserId,
       paymentSessionId,
       status:'PENDING',
     });
@@ -27,7 +33,7 @@ exports.createOrder=async (req ,res) =>{
     return res.status(200).json({ paymentSessionId, orderId });
 
   } catch (error) {
-    console.error('🔥 createOrder failed:', error);
+    console.error('createOrder failed:', error);
     return res.status(500).json({
       error: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
@@ -36,21 +42,25 @@ exports.createOrder=async (req ,res) =>{
 }
 
 exports.getPaymentStatus= async(req,res)=>{
-  try {
-    const {orderId}=req.params;
-    const status=await cashfreeService.getPaymentStatus(orderId);
-    const order=await Order.findOne({where:{orderId}});
-    if(order&&status=="PAID"){
-      order.status=status;
-      await order.save();
-      const user = await User.findByPk(order.userId);
-  if (user && !user.isPremium) {
-    user.isPremium = true;
-    await user.save();
-  }
+  try{
+ const {orderId}=req.params;
+ const userId=req.user.id;
+ const status = await cashfreeService.getPaymentStatus(orderId);
+    const order = await Order.findOne({ where: { orderId, UserId: userId } });
+ if (order.status !== status) {
+      await order.update({ status });
+      if (status === 'PAID') {
+    await User.update(
+      { isPremium: true },
+      { where: { id: req.user.id } }
+    )
     }
-     res.json({ orderStatus: status });
+  }
+    res.json({ orderStatus: status });
+ 
   } catch (error) {
+    console.error(" Payment status check failed:", error);
     res.status(500).json({ error: "Failed to fetch payment status" });
   }
 }
+

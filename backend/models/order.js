@@ -2,8 +2,8 @@ const {DataTypes}=require('sequelize');
 const sequelize=require('../utils/db-connection');
 
 const Order=sequelize.define('Order',{
-  id:{
-    type:DataTypes.INTEGER,
+    id:{
+      type:DataTypes.INTEGER,
     primaryKey:true,
     autoIncrement:true
   },
@@ -14,12 +14,13 @@ const Order=sequelize.define('Order',{
   },
   paymentSessionId: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   status: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM('PENDING', 'PAID', 'FAILED'),
     allowNull: false,
-    defaultValue: 'PENDING'
-    }
+    defaultValue: 'PENDING',
+  }
 })
 module.exports=Order;

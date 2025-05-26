@@ -1,7 +1,7 @@
 const express=require('express');
 const router=express.Router();
 const expenseController=require('../controllers/expenseController');
-const {authenticate}=require('../middleware/auth');
+const authenticate=require('../middleware/auth');
 
 router.post('/',authenticate,expenseController.addExpenses);
 router.get('/',authenticate,expenseController.getExpenses);

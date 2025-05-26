@@ -2,6 +2,8 @@ require('dotenv').config();
 
 console.log('🔑 App ID:',    process.env.CASHFREE_APP_ID ? 'FOUND' : 'MISSING');
 console.log('🔒 Secret Key:', process.env.CASHFREE_SECRET_KEY ? 'FOUND' : 'MISSING');
+console.log('🔒 Secret Key:', process.env.TOKEN_SECRET ? 'FOUND' : 'MISSING');
+
 const express=require('express');
 const sequelize=require('./utils/db-connection');
 const userRoutes=require('./routes/userRoutes');

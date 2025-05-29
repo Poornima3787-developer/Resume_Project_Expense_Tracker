@@ -36,16 +36,16 @@ const cashfree = new Cashfree(CFEnvironment.SANDBOX, process.env.CASHFREE_APP_ID
         const response = await cashfree.PGCreateOrder(request);
         return response.data.payment_session_id;
       } catch (error) {
-        console.error("Error creating order:", error.message);
+        // console.error("Error creating order:", error.message);
       }
     };
     
 
     exports.getPaymentStatus = async (orderId) => {
       try {
-        console.log(orderId)
+       // // console.log(orderId)
         const response = await cashfree.PGOrderFetchPayments( orderId);
-
+       // // console.table(response);
         let getOrderResponse = response.data;
         let orderStatus;
 
@@ -68,7 +68,7 @@ const cashfree = new Cashfree(CFEnvironment.SANDBOX, process.env.CASHFREE_APP_ID
         return orderStatus;
         
       } catch (error) {
-        console.error("Error fetching order status:", error.message);
+        // console.error("Error fetching order status:", error.message);
       }
     };
 

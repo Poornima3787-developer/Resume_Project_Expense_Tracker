@@ -3,9 +3,6 @@ const cashfree = Cashfree({
 });
 document.addEventListener("DOMContentLoaded", async () => {
   loadExpenses();
-  const isPremium=await checkPremiumStatus();
-  updatePremiumUI(isPremium);
-  localStorage.setItem('isPremium',isPremium.toString())
 
 });
 
@@ -20,12 +17,12 @@ async function handleSubmitForm(event){
   
   try {
     const token  = localStorage.getItem('token')
-    const response=await axios.post(API_URL,{amount,description,category},{headers:{'Authorization':token}});
+    const response=await axios.post(API_URL,{amount,description,category},{headers:{'Authorization': 'Bearer ' + token}});
     displayExpense(response.data.expense);
     alert('Expenses added successfully');
     event.target.reset();
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     alert('Failed to add expense');
   }
 }
@@ -33,7 +30,7 @@ async function handleSubmitForm(event){
 async function loadExpenses(){
   try {
     const token  = localStorage.getItem('token');
-    const response=await axios.get(API_URL,{headers:{'Authorization':token}})
+    const response=await axios.get(API_URL,{headers:{'Authorization': 'Bearer ' + token}})
     /* const list = document.getElementById('expense-list');
     list.innerHTML = '';*/
      response.data.expenses.forEach(expense => {
@@ -41,7 +38,7 @@ async function loadExpenses(){
     });
   
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     alert('Failed to fetch expenses');
   }
 }
@@ -57,32 +54,16 @@ function displayExpense(expense){
  async function deleteExpense(id) {
   try {
     const token  = localStorage.getItem('token');
-    const response=await axios.delete(`${API_URL}/${id}`,{headers:{'Authorization':token}});
+    const response=await axios.delete(`${API_URL}/${id}`,{headers:{'Authorization': 'Bearer ' + token}});
     if (response.status === 200) {
       document.getElementById(`expense-${id}`).remove();
       alert('Expense deleted!');
     }
   } catch (error) {
     alert('Failed to delete expense');
-    console.error(error);
+    // console.error(error);
   }
  }
-
- async function checkPremiumStatus() {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) return false;
-    
-    const response = await axios.get('http://localhost:3000/user/status', {
-      headers: { 'Authorization': token }
-    });
-    
-    return response.data.isPremium;
-  } catch (error) {
-    console.error('Premium check failed:', error);
-    return false;
-  }
-}
 
 async function updatePremiumUI(isPremium) {
   const banner = document.getElementById("premium-msg");
@@ -99,7 +80,7 @@ async function updatePremiumUI(isPremium) {
 
 document.getElementById("payBtn").addEventListener("click", async () => {
   try {
-    const response = await axios.post("http://localhost:3000/pay",{ headers: { 'Authorization': localStorage.getItem('token') } });
+    const response = await axios.post("http://localhost:3000/pay");
 
     const data = response.data;
     const paymentSessionId = data.paymentSessionId;
@@ -110,18 +91,17 @@ document.getElementById("payBtn").addEventListener("click", async () => {
     };
 
     await cashfree.checkout(checkoutOptions);
-    checkPaymentStatus(paymentSessionId);
+
   } catch (err) {
-    console.error("Error:", err);
+    // console.error("Error:", err);
   }
 });
 
 async function checkPaymentStatus(paymentSessionId) {
   try {
-    const res = await axios.get(`http://localhost:3000/payment-status/${paymentSessionId}`,{ headers: { 'Authorization': localStorage.getItem('token') } });
+    const res = await axios.get(`http://localhost:3000/payment-status/${paymentSessionId}`);
     if (res.data.orderStatus === 'Success') {
       updatePremiumUI(true);
-      localStorage.setItem('isPremium','true')
     } else {
       alert('Transaction Failed!');
     }

@@ -3,8 +3,8 @@ const User=require('../models/user');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
-function generateAccessToken(id,name,isPremium){
-  return jwt.sign({userId:id,name:name,isPremium:isPremium},process.env.TOKEN_SECRET,{ expiresIn: '12h' });
+function generateAccessToken(id,name){
+  return jwt.sign({userId:id,name:name},process.env.TOKEN_SECRET,{ expiresIn: '12h' });
 }
 
 const userSignup = async (req, res) => {
@@ -21,7 +21,7 @@ const userSignup = async (req, res) => {
   await User.create({ name, email, password: hashedPassword });
    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
-    console.error('SignUp error:', error);
+    // console.error('SignUp error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -47,23 +47,23 @@ return res.status(200).json({
       token: token
     });
    } catch (error) {
-    console.error('Login error:', error);
+    // console.error('Login error:', error);
     return res.status(500).json({ message: 'Internal server error' });
    }
 
 }
 
-const premiumStatus=async(req,res)=>{
+/*const premiumStatus=async(req,res)=>{
   try{
   const user=await User.findByPk(req.user.id);
   res.json({isPremium:user.isPremium})
   }catch (error) {
     res.status(500).json({ message: 'Payment status error' });
   }
-}
+}*/
 module.exports={
   userSignup,
   userLogin,
   generateAccessToken,
-  premiumStatus
+ // premiumStatus
 }

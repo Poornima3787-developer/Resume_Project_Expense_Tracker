@@ -37,20 +37,29 @@ exports.processPayment = async (req, res) => {
 
     res.json({ paymentSessionId, orderId });
   } catch (error) {
-    console.error("Error processing payment:", error.message);
+    // console.error("Error processing payment:", error.message);
     res.status(500).json({ message: "Error processing payment" });
   }
 };
 
 exports.getPaymentStatus = async (req, res) => {
+  
   const paymentSessionId = req.params.paymentSessionId; 
-  console.log(paymentSessionId);
+  console.log();
+  console.log();
+   console.log(paymentSessionId);
+   console.log();
+   console.log();
   try {
     const orderStatus = await getPaymentStatus(paymentSessionId);
-  console.log(orderStatus);
-     const order = await Payment.findOne({  where: { paymentSessionId } });
-    // order.paymentStatus  = orderStatus;
-     //await order.save();
+    console.log();
+    console.log();
+   console.log(orderStatus);
+   console.log();
+   console.log();
+     const order = await Payment.findOne({where:{ paymentSessionId}} );
+     order.paymentStatus  = orderStatus;
+     await order.save();
     if(orderStatus==='Success'){
       const user = await User.findByPk(req.user.id);
       if (user) {
@@ -62,7 +71,7 @@ exports.getPaymentStatus = async (req, res) => {
     res.json({orderStatus})
    
   } catch (error) {
-    console.error("Error fetching payment status:", error.message);
+    // console.error("Error fetching payment status:", error.message);
     res.status(500).json({ message: "Error fetching payment status" });
   }
 };  

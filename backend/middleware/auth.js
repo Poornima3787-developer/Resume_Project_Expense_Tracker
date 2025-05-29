@@ -3,7 +3,9 @@ const jwt=require('jsonwebtoken');
 const User=require('../models/user');
 
 const authenticate=async (req,res,next)=>{
-  const token = req.header('Authorization');
+  const authHeader = req.header('Authorization');
+const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+
   try {   
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
      const user=await User.findByPk(decoded.userId);
@@ -11,7 +13,7 @@ const authenticate=async (req,res,next)=>{
     next(); 
   
   }catch (error) {
-    console.error('Authentication error:', error.name);
+    // console.error('Authentication error:', error.name);
     let message = 'Invalid token';
     if (error.name === 'TokenExpiredError') message = 'Token expired';
     if (error.name === 'JsonWebTokenError') message = 'Malformed token';

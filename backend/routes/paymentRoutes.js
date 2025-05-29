@@ -5,6 +5,6 @@ const authenticate=require('../middleware/auth');
 
 router.get('/', getPaymentPage);
 router.post('/pay', processPayment);
-router.get('/payment-status/:paymentSessionId',authenticate, getPaymentStatus);
+router.get('/payment-status/:paymentSessionId', getPaymentStatus);
 
 module.exports = router;

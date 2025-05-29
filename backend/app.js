@@ -1,8 +1,8 @@
 require('dotenv').config();
 
-console.log('🔑 App ID:',    process.env.CASHFREE_APP_ID ? 'FOUND' : 'MISSING');
-console.log('🔒 Secret Key:', process.env.CASHFREE_SECRET_KEY ? 'FOUND' : 'MISSING');
-console.log('🔒 Secret Key:', process.env.TOKEN_SECRET ? 'FOUND' : 'MISSING');
+// // console.log('🔑 App ID:',    process.env.CASHFREE_APP_ID ? 'FOUND' : 'MISSING');
+// // console.log('🔒 Secret Key:', process.env.CASHFREE_SECRET_KEY ? 'FOUND' : 'MISSING');
+// // console.log('🔒 Secret Key:', process.env.TOKEN_SECRET ? 'FOUND' : 'MISSING');
 
 const express=require('express');
 const sequelize=require('./utils/db-connection');
@@ -24,7 +24,7 @@ app.use('/user',userRoutes);
 app.use('/expenses',expenseRoutes);
 app.use('/',paymentRoutes);
 
-app.get('*', (req, res) => {
+/*app.get('*', (req, res) => {
   const requestedUrl = req.url;
 
   if (requestedUrl.startsWith('/view/')) {
@@ -34,7 +34,7 @@ app.get('*', (req, res) => {
     const filePath = path.join(__dirname, 'public', requestedUrl);
     res.sendFile(filePath);
   }
-});
+});*/
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -42,12 +42,12 @@ Expense.belongsTo(User);
 User.hasMany(Order);
 Order.belongsTo(User);
 
-sequelize.sync({force:true})
+sequelize.sync()
     .then(() => {
         app.listen(3000, () => {
-            console.log('Server running on port 3000');
+            // console.log('Server running on port 3000');
         });
     })
     .catch(err => {
-        console.error('Database sync failed:', err);
+        // console.error('Database sync failed:', err);
     });

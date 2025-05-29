@@ -3,8 +3,8 @@ const User=require('../models/user');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
-function generateAccessToken(id,name){
-  return jwt.sign({userId:id,name:name},process.env.TOKEN_SECRET,{ expiresIn: '12h' });
+function generateAccessToken(id,name,isPremium){
+  return jwt.sign({userId:id,name:name,isPremium:isPremium},process.env.TOKEN_SECRET,{ expiresIn: '12h' });
 }
 
 const userSignup = async (req, res) => {
@@ -40,7 +40,7 @@ const userLogin = async (req ,res) =>{
      if (!isMatch) {
   return res.status(401).json({ message: 'User not authorized' });
 }
-    const token = generateAccessToken(user.id, user.name);
+    const token = generateAccessToken(user.id, user.name,user.isPremium);
 
 return res.status(200).json({
       message: 'User login successful',
@@ -53,8 +53,17 @@ return res.status(200).json({
 
 }
 
+const premiumStatus=async(req,res)=>{
+  try{
+  const user=await User.findByPk(req.user.id);
+  res.json({isPremium:user.isPremium})
+  }catch (error) {
+    res.status(500).json({ message: 'Payment status error' });
+  }
+}
 module.exports={
   userSignup,
   userLogin,
   generateAccessToken,
+  premiumStatus
 }

@@ -1,4 +1,5 @@
 const Expense=require('../models/expense');
+const User=require('../models/user');
 
 const getExpenses=async (req ,res)=>{
   try {
@@ -6,7 +7,7 @@ const getExpenses=async (req ,res)=>{
 
     res.status(200).json({success: true ,expenses});
   } catch (error) {
-
+     console.error(error);
     res.status(500).json({ message: 'Failed to fetch expenses' });
   }
 }
@@ -18,10 +19,13 @@ const addExpenses=async (req ,res)=>{
   }
   try {
     const newExpense=await Expense.create({amount,description,category,UserId:req.user.id});
-   
+    const user = await User.findByPk(req.user.id);
+    const total_cost=Number(user.total_cost)+Number(amount);
+    console.log(req.user.total_cost);
+     await User.update({total_cost:total_cost},{where:{id:req.user.id}});
      res.status(201).json({ message: 'Expense added', expense: newExpense });
   } catch (error) {
-
+    console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

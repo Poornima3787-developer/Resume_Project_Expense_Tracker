@@ -87,6 +87,7 @@ async function updatePremiumUI(isPremium) {
     bannerText.innerText = "🎉 You are a Premium User!";
     bannerBox.style.display = "block";
     if (payBtn) payBtn.style.display = "none";
+    showLeaderboard();
   } else {
     bannerBox.style.display = "none";
     if (payBtn) payBtn.style.display = "block";
@@ -113,6 +114,27 @@ document.getElementById("payBtn").addEventListener("click", async () => {
   }
 });
 
+function showLeaderboard(){
+  const inputElement=document.createElement('input');
+  inputElement.type='button'
+  inputElement.value='show leaderboard'
+  inputElement.className = 'btn btn-info mt-2';
+  inputElement.onclick=async() =>{
+    const token=localStorage.getItem('token');
+    try{
+    const response=await axios.get('http://localhost:3000/premium/leaderboard',{headers:{'Authorization': 'Bearer ' + token}});
+    const leaderboardElem=document.getElementById('leaderboard');
+    leaderboardElem.innerHTML+='<h4>LeaderBoard</h4><ul class="list-group">';
+    response.data.forEach((userDetails)=>{
+      leaderboardElem.innerHTML+=`<li class="list-group-item">Name: ${userDetails.name} - Total Expense: ₹${userDetails.total_cost}</li>`;
+    });
+    leaderboardElem.innerHTML+='</ul>';
+  }catch (err) {
+      alert('Failed to load leaderboard');
+    }
+  }
+  document.getElementById('message').appendChild(inputElement);
+}
 
 function logout() {
   localStorage.clear();

@@ -1,0 +1,25 @@
+/* Premium banner styling */
+.premium-banner {
+  display: none;
+  text-align: right;
+  margin-bottom: 10px;
+  animation: slideFadeIn 1s ease-in-out;
+}
+
+.premium-banner span {
+  color: gold;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Animation for smooth entrance */
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

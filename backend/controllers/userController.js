@@ -40,7 +40,7 @@ const userLogin = async (req ,res) =>{
      if (!isMatch) {
   return res.status(401).json({ message: 'User not authorized' });
 }
-    const token = generateAccessToken(user.id, user.name,user.isPremium);
+    const token = generateAccessToken(user.id, user.name);
 
 return res.status(200).json({
       message: 'User login successful',

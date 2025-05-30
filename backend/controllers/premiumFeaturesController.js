@@ -1,6 +1,4 @@
 const User=require('../models/user');
-const Expense=require('../models/expense');
-const sequelize=require('../utils/db-connection');
 
 exports.getUserLeaderBoard=async (req , res)=>{
   try {

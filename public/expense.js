@@ -68,9 +68,7 @@ function displayExpense(expense){
  async function checkPremiumStatus() {
   const token = localStorage.getItem('token');
   try {
-    const response = await axios.get("http://localhost:3000/user/status", {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
+    const response = await axios.get("http://localhost:3000/user/status",{headers:{'Authorization': 'Bearer ' + token}});
     const isPremium = response.data.isPremium;
     updatePremiumUI(isPremium);  
   } catch (error) {
@@ -80,7 +78,7 @@ function displayExpense(expense){
 
 async function updatePremiumUI(isPremium) {
   const bannerText = document.getElementById("premium-msg");
-  const bannerBox = document.getElementById("premium-banner");  // <-- target div, not span
+  const bannerBox = document.getElementById("premium-banner"); 
   const payBtn = document.getElementById("payBtn");
 
   if (isPremium) {

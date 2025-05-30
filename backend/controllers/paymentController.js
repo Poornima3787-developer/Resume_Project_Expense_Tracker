@@ -1,4 +1,4 @@
-const path = require("path");
+
 const {
   createOrder,
   getPaymentStatus,
@@ -6,9 +6,7 @@ const {
 const Payment = require("../models/payment");
 const User=require('../models/user');
 
-exports.getPaymentPage = (req, res) => {
-  res.sendFile(path.join(__dirname, "../view/expense.html"));
-};
+
 
 exports.processPayment = async (req, res) => {
                                                                                                                     
@@ -32,12 +30,12 @@ exports.processPayment = async (req, res) => {
       orderAmount,
       orderCurrency,
       paymentStatus: "Pending",
-     // UserId: req.user.id
+      UserId:req.user.id
     });
 
     res.json({ paymentSessionId, orderId });
   } catch (error) {
-    // console.error("Error processing payment:", error.message);
+   
     res.status(500).json({ message: "Error processing payment" });
   }
 };
@@ -45,23 +43,17 @@ exports.processPayment = async (req, res) => {
 exports.getPaymentStatus = async (req, res) => {
   
   const paymentSessionId = req.params.paymentSessionId; 
-  console.log();
-  console.log();
-   console.log(paymentSessionId);
-   console.log();
-   console.log();
+  console.log(paymentSessionId);
   try {
     const orderStatus = await getPaymentStatus(paymentSessionId);
-    console.log();
-    console.log();
    console.log(orderStatus);
-   console.log();
-   console.log();
-     const order = await Payment.findOne({where:{ paymentSessionId}} );
+     const order = await Payment.findOne({ where: { orderId:paymentSessionId } } );
+     console.log(order);
      order.paymentStatus  = orderStatus;
      await order.save();
+    
     if(orderStatus==='Success'){
-      const user = await User.findByPk(req.user.id);
+      const user = await User.findByPk(order.UserId);
       if (user) {
     user.isPremium = true;
     await user.save();
@@ -71,7 +63,6 @@ exports.getPaymentStatus = async (req, res) => {
     res.json({orderStatus})
    
   } catch (error) {
-    // console.error("Error fetching payment status:", error.message);
     res.status(500).json({ message: "Error fetching payment status" });
   }
 };  

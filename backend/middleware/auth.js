@@ -13,12 +13,9 @@ const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(
     next(); 
   
   }catch (error) {
-    // console.error('Authentication error:', error.name);
-    let message = 'Invalid token';
-    if (error.name === 'TokenExpiredError') message = 'Token expired';
-    if (error.name === 'JsonWebTokenError') message = 'Malformed token';
+  
     
-    res.status(401).json({ success: false, message });
+    res.status(401).json({ success: false});
   }
 }
 

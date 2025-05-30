@@ -43,9 +43,9 @@ const cashfree = new Cashfree(CFEnvironment.SANDBOX, process.env.CASHFREE_APP_ID
 
     exports.getPaymentStatus = async (orderId) => {
       try {
-       // // console.log(orderId)
+      
         const response = await cashfree.PGOrderFetchPayments( orderId);
-       // // console.table(response);
+       
         let getOrderResponse = response.data;
         let orderStatus;
 

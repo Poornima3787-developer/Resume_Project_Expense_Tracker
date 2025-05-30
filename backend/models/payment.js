@@ -24,8 +24,6 @@ const Payment = sequelize.define('Payment', {
         allowNull: false,
         defaultValue: 'Pending'
     }
-}, {
-    // Other model options go here
 });
 
 module.exports = Payment;

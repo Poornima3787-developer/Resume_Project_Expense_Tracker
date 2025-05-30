@@ -2,13 +2,11 @@ const Expense=require('../models/expense');
 
 const getExpenses=async (req ,res)=>{
   try {
-    // // console.log(" Inside GET /expenses");
-   // // console.log("User from token:", req.user);
     const expenses=await Expense.findAll({where:{UserId:req.user.id}})
-    //// console.log('Expenses fetched for user:', req.user.id, expenses);
+
     res.status(200).json({success: true ,expenses});
   } catch (error) {
-    // console.error('Error in getExpenses:', error);
+
     res.status(500).json({ message: 'Failed to fetch expenses' });
   }
 }
@@ -20,11 +18,10 @@ const addExpenses=async (req ,res)=>{
   }
   try {
     const newExpense=await Expense.create({amount,description,category,UserId:req.user.id});
-    
-    //// console.log("Saved expense >>>", newExpense.toJSON());
+   
      res.status(201).json({ message: 'Expense added', expense: newExpense });
   } catch (error) {
-     // console.error('Error adding expense:', error);
+
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -42,7 +39,7 @@ const deleteExpenses=async (req ,res) =>{
       res.status(404).json({ message: 'Expense not found' });
     }
   } catch (error) {
-    // console.error('Error deleting expense:', error);
+   
     res.status(500).json({ message: 'Error deleting expense' });
   }
 }

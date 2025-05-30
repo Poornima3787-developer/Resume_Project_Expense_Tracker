@@ -3,7 +3,7 @@ const cashfree = Cashfree({
 });
 document.addEventListener("DOMContentLoaded", async () => {
   loadExpenses();
-
+ await checkPremiumStatus();
 });
 
 const API_URL="http://localhost:3000/expenses";
@@ -22,7 +22,7 @@ async function handleSubmitForm(event){
     alert('Expenses added successfully');
     event.target.reset();
   } catch (error) {
-    // console.error(error);
+   
     alert('Failed to add expense');
   }
 }
@@ -38,7 +38,7 @@ async function loadExpenses(){
     });
   
   } catch (error) {
-    // console.error(error);
+    
     alert('Failed to fetch expenses');
   }
 }
@@ -61,26 +61,42 @@ function displayExpense(expense){
     }
   } catch (error) {
     alert('Failed to delete expense');
-    // console.error(error);
+    
   }
  }
 
+ async function checkPremiumStatus() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.get("http://localhost:3000/user/status", {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const isPremium = response.data.isPremium;
+    updatePremiumUI(isPremium);  
+  } catch (error) {
+    console.error("Error fetching premium status:", error);
+  }
+}
+
 async function updatePremiumUI(isPremium) {
-  const banner = document.getElementById("premium-msg");
+  const bannerText = document.getElementById("premium-msg");
+  const bannerBox = document.getElementById("premium-banner");  // <-- target div, not span
   const payBtn = document.getElementById("payBtn");
+
   if (isPremium) {
-    banner.innerText = "🎉 You are a Premium User!";
-    banner.style.display = "block";
+    bannerText.innerText = "🎉 You are a Premium User!";
+    bannerBox.style.display = "block";
     if (payBtn) payBtn.style.display = "none";
   } else {
-    banner.style.display = "none";
+    bannerBox.style.display = "none";
     if (payBtn) payBtn.style.display = "block";
   }
 }
 
 document.getElementById("payBtn").addEventListener("click", async () => {
+  const token  = localStorage.getItem('token');
   try {
-    const response = await axios.post("http://localhost:3000/pay");
+    const response = await axios.post("http://localhost:3000/pay",{},{headers:{'Authorization': 'Bearer ' + token}});
 
     const data = response.data;
     const paymentSessionId = data.paymentSessionId;
@@ -93,22 +109,10 @@ document.getElementById("payBtn").addEventListener("click", async () => {
     await cashfree.checkout(checkoutOptions);
 
   } catch (err) {
-    // console.error("Error:", err);
+   
   }
 });
 
-async function checkPaymentStatus(paymentSessionId) {
-  try {
-    const res = await axios.get(`http://localhost:3000/payment-status/${paymentSessionId}`);
-    if (res.data.orderStatus === 'Success') {
-      updatePremiumUI(true);
-    } else {
-      alert('Transaction Failed!');
-    }
-  } catch (error) {
-    alert('Error verifying payment status');
-  }
-}
 
 function logout() {
   localStorage.clear();

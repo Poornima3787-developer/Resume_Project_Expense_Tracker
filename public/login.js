@@ -18,7 +18,7 @@ async function login(event){
 
   try{
     const response=await axios.post(API_URL,{email,password},{ headers: { "Content-Type": "application/json" }});
-    alert('login successfully');
+    alert('login successful');
     localStorage.setItem('token',response.data.token);
     window.location.href="/view/expense.html";
   }catch(error){

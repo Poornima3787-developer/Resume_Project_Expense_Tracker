@@ -38,7 +38,7 @@ const userLogin = async (req ,res) =>{
 
     const isMatch=await bcrypt.compare(password,user.password);
      if (!isMatch) {
-  return res.status(401).json({ message: 'User not authorized' });
+  return res.status(401).json({ message: 'User password is wrong' });
 }
     const token = generateAccessToken(user.id, user.name);
 

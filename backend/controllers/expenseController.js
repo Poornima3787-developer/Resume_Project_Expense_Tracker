@@ -6,7 +6,7 @@ const getExpenses=async (req ,res)=>{
   try {
 
     const expenses=await Expense.findAll({where:{UserId:req.user.id}})
-
+   // console.log(req.user.id);
     res.status(200).json({success: true ,expenses});
   } catch (error) {
      console.error(error);

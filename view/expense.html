@@ -45,6 +45,23 @@
 
    <div id="leaderboard" class="mt-3"></div>
 
+   <hr>
+<div id="report-section" class="mt-4">
+  <h3>Expense Report</h3>
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <label for="report-filter" class="form-label me-2">View by:</label>
+    <select id="report-filter" class="form-select w-auto">
+      <option value="daily">Daily</option>
+      <option value="weekly">Weekly</option>
+      <option value="monthly">Monthly</option>
+      <option value="all">All</option>
+    </select>
+    <button id="generate-report" class="btn btn-success">Generate</button>
+    <button id="download-report" class="btn btn-outline-primary" disabled>Download Report</button>
+  </div>
+  <div id="report-results" class="table-responsive"></div>
+</div>
+
    <button class="btn btn-outline-secondary mt-3" onclick="logout()">Logout</button>
    </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

@@ -12,6 +12,12 @@
   font-size: 1.2rem;
 }
 
+#report-section {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
 /* Animation for smooth entrance */
 @keyframes slideFadeIn {
   from {

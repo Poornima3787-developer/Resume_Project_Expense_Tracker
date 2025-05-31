@@ -2,8 +2,8 @@ const cashfree = Cashfree({
     mode: "sandbox",
 });
 document.addEventListener("DOMContentLoaded", async () => {
-  loadExpenses();
- await checkPremiumStatus();
+  await loadExpenses();
+  await checkPremiumStatus();
 });
 
 const API_URL="http://localhost:3000/expenses";
@@ -80,15 +80,18 @@ async function updatePremiumUI(isPremium) {
   const bannerText = document.getElementById("premium-msg");
   const bannerBox = document.getElementById("premium-banner"); 
   const payBtn = document.getElementById("payBtn");
+  const downloadBtn = document.getElementById("download-report");
 
   if (isPremium) {
     bannerText.innerText = "🎉 You are a Premium User!";
     bannerBox.style.display = "block";
     if (payBtn) payBtn.style.display = "none";
+    if (downloadBtn) downloadBtn.disabled = false;
     showLeaderboard();
   } else {
     bannerBox.style.display = "none";
     if (payBtn) payBtn.style.display = "block";
+     if (downloadBtn) downloadBtn.disabled = true;
   }
 }
 
@@ -133,6 +136,70 @@ function showLeaderboard(){
   }
   document.getElementById('message').appendChild(inputElement);
 }
+
+document.getElementById("generate-report").addEventListener("click", async () => {
+  const filter = document.getElementById("report-filter").value;
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.get(`http://localhost:3000/report/${filter}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    renderReport(response.data); // Assume response.data is an array of expense objects
+
+  } catch (err) {
+    alert("Error generating report");
+  }
+});
+
+function renderReport(data) {
+  const table = document.createElement("table");
+  table.className = "table table-striped";
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Description</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.map(e => `
+        <tr>
+          <td>${new Date(e.createdAt).toLocaleDateString()}</td>
+          <td>₹${e.amount}</td>
+          <td>${e.description}</td>
+          <td>${e.category}</td>
+        </tr>
+      `).join("")}
+    </tbody>
+  `;
+  document.getElementById("report-results").innerHTML = "";
+  document.getElementById("report-results").appendChild(table);
+}
+
+document.getElementById("download-report").addEventListener("click", async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.get("http://localhost:3000/report/download", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (response.status === 200) {
+      const a = document.createElement("a");
+      a.href = response.data.fileUrl;
+      a.download = "expense_report.csv";
+      a.click();
+    }
+
+  } catch (err) {
+    alert("Download failed");
+  }
+});
+
 
 function logout() {
   localStorage.clear();

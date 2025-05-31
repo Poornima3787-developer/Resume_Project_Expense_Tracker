@@ -13,8 +13,9 @@ async function signup(event){
   }
 
   try {
-    const response=await axios.post(API_URL,{name,email,password});
+    const response=await axios.post(API_URL,{name,email,password},{ headers: { "Content-Type": "application/json" }});
     alert("Signup successful!");
+    localStorage.setItem('token',response.data.token);
     window.location.href = "/view/expense.html"
     event.target.reset();
   } catch (error) {

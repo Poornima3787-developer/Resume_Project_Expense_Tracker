@@ -18,8 +18,9 @@ const userSignup = async (req, res) => {
     
     const saltRounds=10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-  await User.create({ name, email, password: hashedPassword });
-   res.status(201).json({ message: 'User created successfully' });
+  const user=await User.create({ name, email, password: hashedPassword });
+  const token = generateAccessToken(user.id, user.name);
+   res.status(201).json({ message: 'User created successfully',token });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: 'Internal server error' });

@@ -8,6 +8,7 @@ const expenseRoutes=require('./routes/expenseRoutes');
 const paymentRoutes=require('./routes/paymentRoutes');
 const premiumFeaturesRoutes=require('./routes/premiumFeaturesRoutes');
 const resetpasswordRoutes=require('./routes/resetPasswordRoutes');
+const reportRoutes=require('./routes/reportRoutes');
 const User=require('./models/user');
 const Expense=require('./models/expense');
 const Payment=require('./models/payment');
@@ -25,6 +26,7 @@ app.use('/expenses',expenseRoutes);
 app.use('/',paymentRoutes);
 app.use('/premium',premiumFeaturesRoutes);
 app.use('/password',resetpasswordRoutes);
+app.use('/report',reportRoutes);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/view', express.static(path.join(__dirname, 'view')));

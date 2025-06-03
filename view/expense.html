@@ -15,6 +15,7 @@
     <span id="premium-msg"></span>
   </div>
     <h2>Expense Tracker</h2>
+   
     <form id="expense-form" onsubmit="handleSubmitForm(event)" >
       <div class="form-group mb-3">
         <label for="amount">Choose expense amount:</label>
@@ -35,9 +36,21 @@
           <option value="groceries">Groceries</option>
         </select>
       </div>
+            
             <button type="submit" class="btn btn-primary">Add Expense</button>
     </form>
-   <ul id="expense-list" class="list-group mt-3"></ul><br>
+     <label for="limitSelect">Items per page:</label>
+  <select id="limitSelect" onchange="updateLimit()">
+    <option value="5">5</option>
+    <option value="10" selected>10</option>
+    <option value="20">20</option>
+    <option value="40">40</option>
+  </select>
+
+  <ul id="expenseList"></ul>
+
+  <div id="pagination"></div>
+
    
 <button id="payBtn" class="btn btn-primary btn-lg">Buy Premium Membership</button><br>
 

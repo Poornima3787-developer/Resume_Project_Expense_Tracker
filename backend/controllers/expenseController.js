@@ -3,11 +3,27 @@ const User=require('../models/user');
 const sequelize=require('../utils/db-connection');
 
 const getExpenses=async (req ,res)=>{
+  const page=+req.query.page||1;
+  const limit=+req.query.limit||10;
+  const userId=req.user.id;
   try {
-
-    const expenses=await Expense.findAll({where:{UserId:req.user.id}})
-   // console.log(req.user.id);
-    res.status(200).json({success: true ,expenses});
+    const totalItems=await Expense.count({where:{userId}});
+    const expenses=await Expense.findAll({
+      where:{UserId:userId},
+      offset:(page-1)*limit,
+      limit:limit,
+      order:[['createdAt','DESC']],
+      })
+    res.json({
+      expenses,
+      currentPage: page,
+      hasNextPage: limit * page < totalItems,
+      nextPage: page + 1,
+      hasPreviousPage: page > 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / limit),
+      totalItems,
+    });
   } catch (error) {
      console.error(error);
     res.status(500).json({ message: 'Failed to fetch expenses' });

@@ -1,76 +1,139 @@
-const cashfree = Cashfree({
-    mode: "sandbox",
-});
+const cashfree = Cashfree({ mode: "sandbox" });
+
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadExpenses();
   await checkPremiumStatus();
+  await fetchExpenses();
 });
 
-const API_URL="http://localhost:3000/expenses";
+const EXPENSE_API_URL = "http://localhost:3000/expenses";
+let currentPage = +localStorage.getItem("currentPage") || 1;
+let limit = +localStorage.getItem("limit") || 10;
 
-async function handleSubmitForm(event){
+document.getElementById("limitSelect").value = limit;
+
+function getAuthHeader() {
+  const token = localStorage.getItem("token");
+  return { Authorization: `Bearer ${token}` };
+}
+
+function updateLimit() {
+  limit = +document.getElementById("limitSelect").value;
+  localStorage.setItem("limit", limit);
+  currentPage = 1;
+  localStorage.setItem("currentPage", currentPage);
+  fetchExpenses();
+}
+
+function goToPage(page) {
+  currentPage = page;
+  localStorage.setItem("currentPage", page);
+  fetchExpenses();
+}
+
+function renderPagination({ currentPage, hasNextPage, nextPage, hasPreviousPage, previousPage, lastPage }) {
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+
+  if (hasPreviousPage) {
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "Prev";
+    prevBtn.onclick = () => goToPage(previousPage);
+    pagination.appendChild(prevBtn);
+  }
+
+  const pageInfo = document.createElement("span");
+  pageInfo.textContent = ` Page ${currentPage} `;
+  pagination.appendChild(pageInfo);
+
+  if (hasNextPage) {
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next";
+    nextBtn.onclick = () => goToPage(nextPage);
+    pagination.appendChild(nextBtn);
+  }
+
+  const lastInfo = document.createElement("span");
+  lastInfo.textContent = ` | Last Page: ${lastPage}`;
+  pagination.appendChild(lastInfo);
+}
+
+function renderExpenses(expenses) {
+  const list = document.getElementById("expenseList");
+  list.innerHTML = "";
+  expenses.forEach(exp => {
+    const li = document.createElement("li");
+    li.id = `expense-${exp.id}`;
+    li.innerHTML = `₹${exp.amount} - ${exp.description} - ${exp.category} <button class="btn btn-danger btn-sm ms-2" onclick="deleteExpense(${exp.id})">Delete</button>`;
+    list.appendChild(li);
+  });
+}
+
+async function fetchExpenses() {
+  try {
+    const res = await axios.get(`${EXPENSE_API_URL}?page=${currentPage}&limit=${limit}`, {
+      headers: getAuthHeader()
+    });
+    renderExpenses(res.data.expenses);
+    renderPagination(res.data);
+  } catch (err) {
+    alert("Failed to fetch expenses.");
+  }
+}
+
+async function handleSubmitForm(event) {
   event.preventDefault();
 
-  const amount=event.target.amount.value;
-  const description=event.target.description.value;
-  const category=event.target.category.value;
-  
-  try {
-    const token  = localStorage.getItem('token')
-    const response=await axios.post(API_URL,{amount,description,category},{headers:{'Authorization': 'Bearer ' + token}});
-    displayExpense(response.data.expense);
-    alert('Expenses added successfully');
-    event.target.reset();
-  } catch (error) {
-   
-    alert('Failed to add expense');
-  }
-}
+  const amount = event.target.amount.value;
+  const description = event.target.description.value;
+  const category = event.target.category.value;
 
-async function loadExpenses(){
+  if (!amount || !description || !category) {
+    return alert("All fields are required!");
+  }
+
   try {
-    const token  = localStorage.getItem('token');
-    const response=await axios.get(API_URL,{headers:{'Authorization': 'Bearer ' + token}})
-    /* const list = document.getElementById('expense-list');
-    list.innerHTML = '';*/
-     response.data.expenses.forEach(expense => {
-      displayExpense(expense);
+    const response = await axios.post(EXPENSE_API_URL, { amount, description, category }, {
+      headers: getAuthHeader()
     });
-  
+
+    alert("Expense added successfully!");
+    event.target.reset();
+    await fetchExpenses();
   } catch (error) {
-    
-    alert('Failed to fetch expenses');
+    alert("Failed to add expense");
   }
 }
 
-function displayExpense(expense){
-  const list = document.getElementById('expense-list');
-  const li = document.createElement('li');
-  li.id = `expense-${expense.id}`;
-  li.innerHTML = `₹${expense.amount} - ${expense.description} - ${expense.category}<button class="btn btn-danger btn-sm ms-2" onclick="deleteExpense(${expense.id})">Delete</button>`;
-  list.appendChild(li);
- }
-
- async function deleteExpense(id) {
+async function deleteExpense(id) {
   try {
-    const token  = localStorage.getItem('token');
-    const response=await axios.delete(`${API_URL}/${id}`,{headers:{'Authorization': 'Bearer ' + token}});
+    const response = await axios.delete(`${EXPENSE_API_URL}/${id}`, {
+      headers: getAuthHeader()
+    });
+
     if (response.status === 200) {
       document.getElementById(`expense-${id}`).remove();
-      alert('Expense deleted!');
+      alert("Expense deleted!");
+
+      const expenseCount = document.getElementById("expenseList").children.length;
+      if (expenseCount === 0 && currentPage > 1) {
+        currentPage--;
+        localStorage.setItem("currentPage", currentPage);
+      }
+      fetchExpenses();
     }
   } catch (error) {
-    alert('Failed to delete expense');
-    
+    alert("Failed to delete expense");
   }
- }
+}
 
- async function checkPremiumStatus() {
-  const token = localStorage.getItem('token');
+async function checkPremiumStatus() {
   try {
-    const response = await axios.get("http://localhost:3000/user/status",{headers:{'Authorization': 'Bearer ' + token}});
+    const response = await axios.get("http://localhost:3000/user/status", {
+      headers: getAuthHeader()
+    });
+
     const isPremium = response.data.isPremium;
-    updatePremiumUI(isPremium);  
+    updatePremiumUI(isPremium);
   } catch (error) {
     console.error("Error fetching premium status:", error);
   }
@@ -78,7 +141,7 @@ function displayExpense(expense){
 
 async function updatePremiumUI(isPremium) {
   const bannerText = document.getElementById("premium-msg");
-  const bannerBox = document.getElementById("premium-banner"); 
+  const bannerBox = document.getElementById("premium-banner");
   const payBtn = document.getElementById("payBtn");
   const downloadBtn = document.getElementById("download-report");
 
@@ -91,63 +154,65 @@ async function updatePremiumUI(isPremium) {
   } else {
     bannerBox.style.display = "none";
     if (payBtn) payBtn.style.display = "block";
-     if (downloadBtn) downloadBtn.disabled = true;
+    if (downloadBtn) downloadBtn.disabled = true;
   }
 }
 
 document.getElementById("payBtn").addEventListener("click", async () => {
-  const token  = localStorage.getItem('token');
   try {
-    const response = await axios.post("http://localhost:3000/pay",{},{headers:{'Authorization': 'Bearer ' + token}});
+    const response = await axios.post("http://localhost:3000/pay", {}, {
+      headers: getAuthHeader()
+    });
 
-    const data = response.data;
-    const paymentSessionId = data.paymentSessionId;
+    const { paymentSessionId } = response.data;
 
-    let checkoutOptions = {
-        paymentSessionId: paymentSessionId,
-        redirectTarget: "_self", 
-    };
-
-    await cashfree.checkout(checkoutOptions);
-
+    await cashfree.checkout({
+      paymentSessionId,
+      redirectTarget: "_self"
+    });
   } catch (err) {
-   
+    alert("Payment initiation failed.");
   }
 });
 
-function showLeaderboard(){
-  const inputElement=document.createElement('input');
-  inputElement.type='button'
-  inputElement.value='show leaderboard'
-  inputElement.className = 'btn btn-info mt-2';
-  inputElement.onclick=async() =>{
-    const token=localStorage.getItem('token');
-    try{
-    const response=await axios.get('http://localhost:3000/premium/leaderboard',{headers:{'Authorization': 'Bearer ' + token}});
-    const leaderboardElem=document.getElementById('leaderboard');
-    leaderboardElem.innerHTML+='<h4>LeaderBoard</h4><ul class="list-group">';
-    response.data.forEach((userDetails)=>{
-      leaderboardElem.innerHTML+=`<li class="list-group-item">Name: ${userDetails.name} - Total Expense: ₹${userDetails.total_cost}</li>`;
-    });
-    leaderboardElem.innerHTML+='</ul>';
-  }catch (err) {
-      alert('Failed to load leaderboard');
+function showLeaderboard() {
+  if (document.getElementById("show-leaderboard-btn")) return;
+
+  const inputElement = document.createElement("input");
+  inputElement.type = "button";
+  inputElement.id = "show-leaderboard-btn";
+  inputElement.value = "Show Leaderboard";
+  inputElement.className = "btn btn-info mt-2";
+
+  inputElement.onclick = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/premium/leaderboard", {
+        headers: getAuthHeader()
+      });
+
+      const leaderboardElem = document.getElementById("leaderboard");
+      leaderboardElem.innerHTML = '<h4>LeaderBoard</h4><ul class="list-group">';
+      response.data.forEach(userDetails => {
+        leaderboardElem.innerHTML += `<li class="list-group-item">Name: ${userDetails.name} - Total Expense: ₹${userDetails.total_cost}</li>`;
+      });
+      leaderboardElem.innerHTML += '</ul>';
+    } catch (err) {
+      alert("Failed to load leaderboard");
     }
-  }
-  document.getElementById('message').appendChild(inputElement);
+  };
+
+  document.getElementById("message").appendChild(inputElement);
 }
 
 document.getElementById("generate-report").addEventListener("click", async () => {
   const filter = document.getElementById("report-filter").value;
-  const token = localStorage.getItem("token");
 
   try {
     const response = await axios.get(`http://localhost:3000/report/${filter}`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: getAuthHeader()
     });
 
-    renderReport(response.data); // Assume response.data is an array of expense objects
-
+    renderReport(response.data);
   } catch (err) {
     alert("Error generating report");
   }
@@ -181,11 +246,9 @@ function renderReport(data) {
 }
 
 document.getElementById("download-report").addEventListener("click", async () => {
-  const token = localStorage.getItem("token");
-
   try {
     const response = await axios.get("http://localhost:3000/report/download", {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: getAuthHeader()
     });
 
     if (response.status === 200) {
@@ -194,15 +257,12 @@ document.getElementById("download-report").addEventListener("click", async () =>
       a.download = "expense_report.csv";
       a.click();
     }
-
   } catch (err) {
     alert("Download failed");
   }
 });
 
-
 function logout() {
   localStorage.clear();
   window.location.href = "/view/login.html";
 }
-

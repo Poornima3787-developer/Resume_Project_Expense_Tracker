@@ -60,13 +60,19 @@ function renderPagination({ currentPage, hasNextPage, nextPage, hasPreviousPage,
 function renderExpenses(expenses) {
   const list = document.getElementById("expenseList");
   list.innerHTML = "";
+
   expenses.forEach(exp => {
     const li = document.createElement("li");
     li.id = `expense-${exp.id}`;
-    li.innerHTML = `₹${exp.amount} - ${exp.description} - ${exp.category} <button class="btn btn-danger btn-sm ms-2" onclick="deleteExpense(${exp.id})">Delete</button>`;
+    li.innerHTML = `
+      ₹${exp.amount} - ${exp.description} - ${exp.category}
+      ${exp.note ? `- <em>Note:</em> ${exp.note}` : ""}
+      <button class="btn btn-danger btn-sm ms-2" onclick="deleteExpense(${exp.id})">Delete</button>
+    `;
     list.appendChild(li);
   });
 }
+
 
 async function fetchExpenses() {
   try {
@@ -86,13 +92,14 @@ async function handleSubmitForm(event) {
   const amount = event.target.amount.value;
   const description = event.target.description.value;
   const category = event.target.category.value;
+  const note = event.target.note.value; 
 
   if (!amount || !description || !category) {
     return alert("All fields are required!");
   }
 
   try {
-    const response = await axios.post(EXPENSE_API_URL, { amount, description, category }, {
+    const response = await axios.post(EXPENSE_API_URL, { amount, description, category,note }, {
       headers: getAuthHeader()
     });
 
@@ -228,6 +235,7 @@ function renderReport(data) {
         <th>Amount</th>
         <th>Description</th>
         <th>Category</th>
+        <th>Note</th> 
       </tr>
     </thead>
     <tbody>
@@ -237,6 +245,7 @@ function renderReport(data) {
           <td>₹${e.amount}</td>
           <td>${e.description}</td>
           <td>${e.category}</td>
+          <td>${e.note}</td>
         </tr>
       `).join("")}
     </tbody>

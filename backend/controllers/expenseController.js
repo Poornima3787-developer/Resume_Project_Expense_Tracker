@@ -32,12 +32,12 @@ const getExpenses=async (req ,res)=>{
 
 const addExpenses=async (req ,res)=>{
   const t= await sequelize.transaction();
-  const {amount,description,category}=req.body;
+  const {amount,description,category,note}=req.body;
   if (!amount || !description || !category) {
     return res.status(400).json({ success: false, message: 'Amount is required' });
   }
   try {
-    const newExpense=await Expense.create({amount,description,category,UserId:req.user.id},{transaction:t});
+    const newExpense=await Expense.create({amount,description,category,note,UserId:req.user.id},{transaction:t});
     const user = await User.findByPk(req.user.id);
     const total_cost=Number(user.total_cost)+Number(amount);
     console.log(req.user.total_cost);

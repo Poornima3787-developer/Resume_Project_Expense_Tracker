@@ -1,31 +1,164 @@
-/* Premium banner styling */
-.premium-banner {
-  display: none;
-  text-align: right;
-  margin-bottom: 10px;
-  animation: slideFadeIn 1s ease-in-out;
-}
-
-.premium-banner span {
-  color: gold;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-#report-section {
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-}
-
-/* Animation for smooth entrance */
-@keyframes slideFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  body {
+    background: url('../images/calculator.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0f7fa;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  /* Card and Form Elements */
+  .card, .form-control, .form-select {
+    background-color: rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+    border: 1px solid #00e5ff;
   }
+
+  .form-control::placeholder,
+  .form-select {
+    color: #b2ebf2;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #00e5ff;
+    box-shadow: 0 0 5px #00e5ff;
+    outline: none;
+  }
+
+  /* Navbar */
+  .navbar {
+    background-color: #043346; 
+    color: #fff;
+    border-bottom: 1px solid #00e5ff;
+  }
+
+  .navbar-brand {
+    font-weight: bold;
+    color: #00e5ff !important;
+   
+  }
+
+  .btn {
+    border-radius: 20px;
+    font-weight: bold;
+  }
+
+  .btn-success {
+    background-color: #00c853;
+    border: none;
+  }
+
+  .btn-primary {
+    background-color: #00bcd4;
+    border: none;
+  }
+
+  .btn-secondary {
+    background-color: #455a64;
+    border: none;
+  }
+
+  .btn-outline-light {
+    color: #fff;
+    border: 1px solid #00e5ff;
+  }
+
+  .btn-outline-light:hover {
+    background-color: #00e5ff;
+    color: #000;
+  }
+
+  /* Table */
+  .table {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e0f7fa;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .table th {
+    background-color: rgba(0, 229, 255, 0.2);
+    color: #00e5ff;
+  }
+
+  .table td {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+  }
+
+  /* Pagination & Controls */
+  #pagination,
+  #report-results,
+  #limitSelect {
+  background-color: #fff !important;
+  color: #000 !important;
+  border: 1px solid #ccc !important;
+  box-shadow: none !important;
+  }
+  label[for="limitSelect"] {
+  color: #fff;
 }
+
+/*leaderboard*/
+#leaderboard {
+  color: #fff;
+}
+
+#leaderboard table,
+#leaderboard th,
+#leaderboard td {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.6); /* Optional for better contrast */
+}
+
+  /* Premium Banner */
+  .premium-banner {
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  /* Report Section */
+  #report-results {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+    color: #b2ebf2;
+  }
+
+  #report-filter {
+    background-color: #263238;
+    color: #e0f7fa;
+    border: 1px solid #00e5ff;
+  }
+  #report-section h4 {
+  color: #fff;
+}
+
+  /* Hover & focus styles */
+  .btn:hover {
+    opacity: 0.9;
+    transform: scale(1.01);
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 229, 255, 0.2);
+  }
+
+  /* Scrollbar for overflow */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #00e5ff;
+    border-radius: 10px;
+  }
+  

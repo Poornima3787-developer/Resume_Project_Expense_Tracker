@@ -62,14 +62,16 @@ function renderExpenses(expenses) {
   list.innerHTML = "";
 
   expenses.forEach(exp => {
-    const li = document.createElement("li");
-    li.id = `expense-${exp.id}`;
-    li.innerHTML = `
-      ₹${exp.amount} - ${exp.description} - ${exp.category}
-      ${exp.note ? `- <em>Note:</em> ${exp.note}` : ""}
-      <button class="btn btn-danger btn-sm ms-2" onclick="deleteExpense(${exp.id})">Delete</button>
+    const tr = document.createElement("tr");
+    tr.id = `expense-${exp.id}`;
+    tr.innerHTML = `
+      <td>₹${exp.amount}</td>
+      <td>${exp.description}</td>
+      <td>${exp.category}</td>
+      <td>${exp.note || ""}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteExpense(${exp.id})">Delete</button></td>
     `;
-    list.appendChild(li);
+    list.appendChild(tr);
   });
 }
 
@@ -99,7 +101,7 @@ async function handleSubmitForm(event) {
   }
 
   try {
-    const response = await axios.post(EXPENSE_API_URL, { amount, description, category,note }, {
+     await axios.post(EXPENSE_API_URL, { amount, description, category,note }, {
       headers: getAuthHeader()
     });
 
@@ -126,7 +128,7 @@ async function deleteExpense(id) {
         currentPage--;
         localStorage.setItem("currentPage", currentPage);
       }
-      fetchExpenses();
+      await fetchExpenses();
     }
   } catch (error) {
     alert("Failed to delete expense");

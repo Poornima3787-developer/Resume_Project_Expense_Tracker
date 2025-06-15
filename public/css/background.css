@@ -1,0 +1,53 @@
+ body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background-image: url('../images/image.png'); /* Change path if needed */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      box-shadow: none;
+      outline: none;
+    }
+
+    .btn-primary {
+      background-color: #3d5afe;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #2a3eb1;
+    }
+
+    a {
+      color: #fff;
+      text-decoration: underline;
+    }

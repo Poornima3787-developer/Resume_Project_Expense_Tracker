@@ -153,12 +153,11 @@ async function updatePremiumUI(isPremium) {
   const bannerBox = document.getElementById("premium-banner");
   const payBtn = document.getElementById("payBtn");
   const downloadBtn = document.getElementById("download-report");
-
   if (isPremium) {
-    bannerText.innerText = "🎉 You are a Premium User!";
+    bannerText.innerText = "✨ You are a Premium User!";
     bannerBox.style.display = "block";
     if (payBtn) payBtn.style.display = "none";
-    if (downloadBtn) downloadBtn.disabled = false;
+    if (downloadBtn) downloadBtn.disabled = false;;
     showLeaderboard();
   } else {
     bannerBox.style.display = "none";
@@ -200,7 +199,8 @@ function showLeaderboard() {
       });
 
       const leaderboardElem = document.getElementById("leaderboard");
-      leaderboardElem.innerHTML = '<h4>LeaderBoard</h4><ul class="list-group">';
+      leaderboardElem.innerHTML = ` <h4 id="leaderboard-title">🏆 Premium Leaderboard</h4>
+        <ul class="list-group list-group-flush bg-transparent">`;
       response.data.forEach(userDetails => {
         leaderboardElem.innerHTML += `<li class="list-group-item">Name: ${userDetails.name} - Total Expense: ₹${userDetails.total_cost}</li>`;
       });

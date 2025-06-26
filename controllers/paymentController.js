@@ -1,8 +1,5 @@
 
-const {
-  createOrder,
-  getPaymentStatus,
-} = require("../services/cashfreeService");
+const {createOrder,getPaymentStatus} = require("../service/cashfreeService");
 const Payment = require("../models/payment");
 const User=require('../models/user');
 

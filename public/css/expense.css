@@ -33,7 +33,7 @@
 
   .navbar-brand {
     font-weight: bold;
-    color: #00e5ff !important;
+    color: #00e5ff;
    
   }
 
@@ -107,18 +107,21 @@
 #leaderboard th,
 #leaderboard td {
   color: #fff;
-  background-color: rgba(0, 0, 0, 0.6); /* Optional for better contrast */
+  background-color: rgba(0, 0, 0, 0.6); 
 }
 
   /* Premium Banner */
   .premium-banner {
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
-    color: white;
+    background: transparent;
     padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
+    text-align: left;
   }
+  #premium-msg {
+  color: gold; 
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
 
   /* Report Section */
   #report-results {
@@ -137,6 +140,28 @@
   #report-section h4 {
   color: #fff;
 }
+#show-leaderboard-btn {
+  background: linear-gradient(to right, gold, orange);
+  border: none;
+  color: black;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 8px 20px;
+  box-shadow: 0 0 10px gold;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#show-leaderboard-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px gold;
+}
+
+#download-link-container a {
+  color: #0dcaf0; /* bright blue */
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 
   /* Hover & focus styles */
   .btn:hover {

@@ -1,6 +1,10 @@
+require('dotenv').config();
 const Expense=require('../models/expense');
 const User=require('../models/user');
 const sequelize=require('../utils/db-connection');
+const UserServices=require('../service/userservices');
+const S3Service=require('../service/S3services');
+const DownloadedFile = require('../models/downloadedFile');
 
 const getExpenses=async (req ,res)=>{
   const page=+req.query.page||1;
@@ -80,8 +84,46 @@ await User.decrement('total_cost', {
   }
 }
 
+const downloadExpense=async (req,res)=>{
+  try{
+  const expenses=await UserServices.getExpenses(req);
+  //console.log(expenses);
+  const stringifiedExpenses=JSON.stringify(expenses);
+  const userId=req.user.id;
+  const filename=`Expense${userId}/${new Date()}.txt`;
+  const fileURL= await S3Service.uploadToS3(stringifiedExpenses,filename);
+
+  await DownloadedFile.create({
+      UserId:userId,
+      fileUrl: fileURL,
+      downloadDate: new Date()
+    });
+
+  res.status(200).json({fileURL,success:true})
+  }catch(error){
+    console.log(error);
+    res.status(500).json({fileURL:'',success:true,error:error});
+  }
+}
+
+const getDownloadHistory=async (req,res)=>{
+  try {
+    const userId=req.user.id;
+    const history=await DownloadedFile.findAll({
+      where:{userId},
+      order:[['downloadDate','DESC']],
+    });
+    res.status(200).json({history});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch download history' });
+  }
+}
+
 module.exports={
   getExpenses,
   addExpenses,
-  deleteExpenses
+  deleteExpenses,
+  downloadExpense,
+  getDownloadHistory
 }

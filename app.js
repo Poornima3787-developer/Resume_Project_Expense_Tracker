@@ -38,8 +38,15 @@ app.use(express.json());
 app.use(cors());
 
 // Static files
-app.use(express.static(path.join(__dirname,'..', 'public')));
-app.use('/view', express.static(path.join(__dirname,'..', 'view')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/login',(req,res)=>{
+  res.sendFile(path.join(__dirname, 'view','login.html'))
+});
+
+app.get('/signup',(req,res)=>{
+  res.sendFile(path.join(__dirname, 'view','signup.html'))
+});
 
 // Routes
 app.use('/user', userRoutes);
@@ -69,7 +76,7 @@ app.get('/',(req,res)=>{
 sequelize.sync()
   .then(() => {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT,'0.0.0.0',() => {
+    app.listen(PORT ,() => {
       console.log(`Server running on port ${PORT}`);
     });
   })

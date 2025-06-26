@@ -6,9 +6,21 @@ const sequelize=new Sequelize(
   process.env.DB_USER,
   process.env.DB_PASSWORD,{
   host:process.env.DB_HOST,
+  port:process.env.DB_PORT,
   dialect:'mysql',
   logging: false,
-});
+}
+);
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Connection established successfully!");
+    await sequelize.sync(); // or .sync({ force: false })
+  } catch (err) {
+    console.error("❌ DB connection error:", err);
+  }
+})();
 
 
 module.exports=sequelize;

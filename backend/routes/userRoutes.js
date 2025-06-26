@@ -5,6 +5,6 @@ const authenticate=require('../middleware/auth');
 
 router.post('/signup',userController.userSignup);
 router.post('/login',userController.userLogin);
-router.get('/status',authenticate,userController.premiumStatus)
+router.get('/status',authenticate,userController.premiumStatus);
 
 module.exports=router;

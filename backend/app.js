@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
@@ -20,6 +21,7 @@ const User = require('./models/user');
 const Expense = require('./models/expense');
 const Payment = require('./models/payment');
 const ForgotPassword = require('./models/forgotPassword');
+const DownloadedFile=require('./models/downloadedFile')
 
 const app = express();
 
@@ -36,8 +38,8 @@ app.use(express.json());
 app.use(cors());
 
 // Static files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/view', express.static(path.join(__dirname, 'view')));
+app.use(express.static(path.join(__dirname,'..', 'public')));
+app.use('/view', express.static(path.join(__dirname,'..', 'view')));
 
 // Routes
 app.use('/user', userRoutes);
@@ -57,11 +59,17 @@ Payment.belongsTo(User);
 User.hasMany(ForgotPassword);
 ForgotPassword.belongsTo(User);
 
+User.hasMany(DownloadedFile);
+DownloadedFile.belongsTo(User);
+
+app.get('/',(req,res)=>{
+  res.send('server is running');
+})
 // Start Server
 sequelize.sync()
   .then(() => {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
+    app.listen(PORT,'0.0.0.0',() => {
       console.log(`Server running on port ${PORT}`);
     });
   })

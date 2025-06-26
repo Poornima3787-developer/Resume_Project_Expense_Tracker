@@ -3,9 +3,11 @@ const cashfree = Cashfree({ mode: "sandbox" });
 document.addEventListener("DOMContentLoaded", async () => {
   await checkPremiumStatus();
   await fetchExpenses();
+  await loadDownloadHistory();
 });
 
 const EXPENSE_API_URL = "http://localhost:3000/expenses";
+
 let currentPage = +localStorage.getItem("currentPage") || 1;
 let limit = +localStorage.getItem("limit") || 10;
 
@@ -88,6 +90,8 @@ async function fetchExpenses() {
   }
 }
 
+//Grabbing the expenses
+
 async function handleSubmitForm(event) {
   event.preventDefault();
 
@@ -113,6 +117,8 @@ async function handleSubmitForm(event) {
   }
 }
 
+//Deleting the expenses
+
 async function deleteExpense(id) {
   try {
     const response = await axios.delete(`${EXPENSE_API_URL}/${id}`, {
@@ -134,6 +140,8 @@ async function deleteExpense(id) {
     alert("Failed to delete expense");
   }
 }
+
+//Checking the premium status
 
 async function checkPremiumStatus() {
   try {
@@ -258,20 +266,65 @@ function renderReport(data) {
 
 document.getElementById("download-report").addEventListener("click", async () => {
   try {
-    const response = await axios.get("http://localhost:3000/report/download", {
+    const response = await axios.get(`${EXPENSE_API_URL}/download`, {
       headers: getAuthHeader()
     });
-
-    if (response.status === 200) {
-      const a = document.createElement("a");
-      a.href = response.data.fileUrl;
-      a.download = "expense_report.csv";
+    if(response.status===200){
+       const linkContainer = document.getElementById("download-link-container");
+      linkContainer.innerHTML = `
+        ✅ Report ready: <a href="${response.data.fileURL}" target="_blank">Click here to download</a>
+      `;
+      const a=document.createElement('a');
+      a.href=response.data.fileURL;
+      a.download='myexpense.csv';
       a.click();
+      loadDownloadHistory(); 
     }
+
   } catch (err) {
     alert("Download failed");
   }
 });
+
+async function loadDownloadHistory(){
+  try {
+    const response = await axios.get(`${EXPENSE_API_URL}/download/history`, {
+      headers: getAuthHeader()
+    });
+
+    const history = response.data.history;
+    const list = document.getElementById('download-history-list');
+    const linkContainer = document.getElementById('download-link-container');
+
+    list.innerHTML = '';
+    linkContainer.innerHTML = '';
+
+    if (history.length > 0) {
+      history.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.innerHTML = `
+          ${index === 0 ? '🆕 ' : ''}
+          <a href="${item.fileUrl}" target="_blank">Download</a>
+          <small class="text-muted"> - ${new Date(item.downloadDate).toLocaleString()}</small>
+        `;
+        list.appendChild(li);
+      });
+
+      // You can remove this if you don't want a separate section:
+      const latest = history[0];
+      linkContainer.innerHTML = `
+        ✅ Last Report: <a href="${latest.fileUrl}" target="_blank">Click here to download</a>
+        <br><small>Downloaded on: ${new Date(latest.downloadDate).toLocaleString()}</small>
+      `;
+    }
+
+  } catch (error) {
+    console.error("Failed to load download history", error);
+  }
+}
+
+
 
 function logout() {
   localStorage.clear();

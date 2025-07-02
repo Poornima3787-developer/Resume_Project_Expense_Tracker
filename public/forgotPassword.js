@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById('email').value;
 
     try {
-      const response = await axios.post('http://localhost:3000/password/forgotpassword', { email });
+      const response = await axios.post('/password/forgotpassword', { email });
 
       if (response.status === 202) {
         messageDiv.innerHTML = '<span class="text-success">Reset link sent! Check your email.</span>';

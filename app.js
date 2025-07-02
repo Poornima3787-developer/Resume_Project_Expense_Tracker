@@ -48,6 +48,13 @@ app.get('/signup',(req,res)=>{
   res.sendFile(path.join(__dirname, 'view','signup.html'))
 });
 
+app.get('/expense', (req, res) => {
+  res.sendFile(path.join(__dirname, 'view', 'expense.html'));
+});
+
+app.get('/forgot-password', (req, res) => {
+  res.sendFile(path.join(__dirname, 'view', 'forgotPassword.html'));
+});
 // Routes
 app.use('/user', userRoutes);
 app.use('/expenses', expenseRoutes);

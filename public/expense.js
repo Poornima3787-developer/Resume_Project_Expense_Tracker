@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadDownloadHistory();
 });
 
-const EXPENSE_API_URL = "http://localhost:3000/expenses";
+const EXPENSE_API_URL = "/expenses";
 
 let currentPage = +localStorage.getItem("currentPage") || 1;
 let limit = +localStorage.getItem("limit") || 10;
@@ -145,7 +145,7 @@ async function deleteExpense(id) {
 
 async function checkPremiumStatus() {
   try {
-    const response = await axios.get("http://localhost:3000/user/status", {
+    const response = await axios.get("/user/status", {
       headers: getAuthHeader()
     });
 
@@ -176,7 +176,7 @@ async function updatePremiumUI(isPremium) {
 
 document.getElementById("payBtn").addEventListener("click", async () => {
   try {
-    const response = await axios.post("http://localhost:3000/pay", {}, {
+    const response = await axios.post("/pay", {}, {
       headers: getAuthHeader()
     });
 
@@ -202,7 +202,7 @@ function showLeaderboard() {
 
   inputElement.onclick = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/premium/leaderboard", {
+      const response = await axios.get("/premium/leaderboard", {
         headers: getAuthHeader()
       });
 
@@ -225,7 +225,7 @@ document.getElementById("generate-report").addEventListener("click", async () =>
   const filter = document.getElementById("report-filter").value;
 
   try {
-    const response = await axios.get(`http://localhost:3000/report/${filter}`, {
+    const response = await axios.get(`/report/${filter}`, {
       headers: getAuthHeader()
     });
 
@@ -311,7 +311,7 @@ async function loadDownloadHistory(){
         list.appendChild(li);
       });
 
-      // You can remove this if you don't want a separate section:
+    
       const latest = history[0];
       linkContainer.innerHTML = `
         ✅ Last Report: <a href="${latest.fileUrl}" target="_blank">Click here to download</a>
@@ -328,5 +328,5 @@ async function loadDownloadHistory(){
 
 function logout() {
   localStorage.clear();
-  window.location.href = "/view/login.html";
+  window.location.href = "/login";
 }

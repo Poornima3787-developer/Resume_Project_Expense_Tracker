@@ -1,4 +1,4 @@
-const API_URL="http://localhost:3000/user/signup";
+const API_URL="/user/signup";
 
 async function signup(event){
   event.preventDefault();
@@ -16,7 +16,7 @@ async function signup(event){
     const response=await axios.post(API_URL,{name,email,password},{ headers: { "Content-Type": "application/json" }});
     alert("Signup successful!");
     localStorage.setItem('token',response.data.token);
-    window.location.href = "/view/expense.html"
+    window.location.href = "/expense"
     event.target.reset();
   } catch (error) {
     const msg=error.response?.data?.message || "Signup failed.";

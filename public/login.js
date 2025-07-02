@@ -1,4 +1,4 @@
-const API_URL="http://localhost:3000/user/login";
+const API_URL="/user/login";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("login-form");
@@ -20,7 +20,7 @@ async function login(event){
     const response=await axios.post(API_URL,{email,password},{ headers: { "Content-Type": "application/json" }});
     alert('login successful');
     localStorage.setItem('token',response.data.token);
-    window.location.href="/view/expense.html";
+    window.location.href="/expense";
   }catch(error){
     const msg = error.response?.data?.message || "Login failed.";
     alert(msg);

@@ -76,9 +76,7 @@ ForgotPassword.belongsTo(User);
 User.hasMany(DownloadedFile);
 DownloadedFile.belongsTo(User);
 
-app.get('/',(req,res)=>{
-  res.send('server is running');
-})
+
 // Start Server
 sequelize.sync()
   .then(() => {

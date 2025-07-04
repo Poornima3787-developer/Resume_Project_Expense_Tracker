@@ -40,12 +40,12 @@ exports.processPayment = async (req, res) => {
 exports.getPaymentStatus = async (req, res) => {
   
   const paymentSessionId = req.params.paymentSessionId; 
-  console.log(paymentSessionId);
+ // console.log(paymentSessionId);
   try {
     const orderStatus = await getPaymentStatus(paymentSessionId);
-   console.log(orderStatus);
+  // console.log(orderStatus);
      const order = await Payment.findOne({ where: { orderId:paymentSessionId } } );
-     console.log(order);
+    // console.log(order);
      order.paymentStatus  = orderStatus;
      await order.save();
     

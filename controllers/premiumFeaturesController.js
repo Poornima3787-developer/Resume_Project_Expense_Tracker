@@ -7,7 +7,7 @@ exports.getUserLeaderBoard=async (req , res)=>{
    res.status(200).json(leaderboardofUsers); 
     
   } catch (error) {
-    console.log(error);
+   // console.log(error);
     res.status(500).json('leaderboard error');
   }
 }

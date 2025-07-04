@@ -44,7 +44,7 @@ const addExpenses=async (req ,res)=>{
     const newExpense=await Expense.create({amount,description,category,note,UserId:req.user.id},{transaction:t});
     const user = await User.findByPk(req.user.id);
     const total_cost=Number(user.total_cost)+Number(amount);
-    console.log(req.user.total_cost);
+   // console.log(req.user.total_cost);
      await User.update({total_cost:total_cost},{where:{id:req.user.id},transaction:t});
      await t.commit();
      res.status(201).json({ message: 'Expense added', expense: newExpense });
@@ -101,7 +101,7 @@ const downloadExpense=async (req,res)=>{
 
   res.status(200).json({fileURL,success:true})
   }catch(error){
-    console.log(error);
+   // console.log(error);
     res.status(500).json({fileURL:'',success:true,error:error});
   }
 }

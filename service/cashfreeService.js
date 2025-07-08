@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const { Cashfree, CFEnvironment } = require("cashfree-pg");
+const BASE_URL=process.env.BASE_URL;
 
 const cashfree = new Cashfree(CFEnvironment.SANDBOX, process.env.CASHFREE_APP_ID,process.env.CASHFREE_SECRET_KEY );
 
@@ -27,7 +28,7 @@ const cashfree = new Cashfree(CFEnvironment.SANDBOX, process.env.CASHFREE_APP_ID
           },
 
           order_meta: {
-            "return_url":"http://localhost:3000/payment-status/"+orderId,
+            "return_url":`${BASE_URL}/payment-status/${orderId}`,
             payment_methods: "ccc, upi, nb"
           },
           order_expiry_time: formattedExpiryDate,

@@ -1,8 +1,11 @@
+require('dotenv').config();
 const Expense=require('../models/expense');
 const { Op } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 const { Parser } = require('json2csv');
+
+const BASE_URL = process.env.BASE_URL;
 
 exports.getFilteredReport = async (req, res) => {
   const userId = req.user.id;
@@ -47,7 +50,7 @@ exports.downloadReport = async (req, res) => {
     fs.writeFileSync(filePath, csv);
 
   
-    const fileUrl = `http://localhost:3000/reports/${fileName}`;
+    const fileUrl = `${BASE_URL}/reports/${fileName}`;;
 
     res.status(200).json({ fileUrl });
 

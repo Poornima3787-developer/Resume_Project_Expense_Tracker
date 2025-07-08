@@ -3,7 +3,10 @@ const uuid = require('uuid');
 const SibApiV3Sdk = require('sib-api-v3-sdk');
 const bcrypt = require('bcrypt');
 const User=require('../models/user');
-const ForgotPassword=require('../models/forgotPassword')
+const ForgotPassword=require('../models/forgotPassword');
+
+const BASE_URL=process.env.BASE_URL;
+const resetUrl = `${BASE_URL}/password/resetpassword/${id}`;
 
 const client = SibApiV3Sdk.ApiClient.instance;
 client.authentications['api-key'].apiKey = process.env.Email_API_KEY;
@@ -20,7 +23,7 @@ const forgotpassword=async (req,res)=>{
       sender: { email: 'poornimaaragala@gmail.com', name: 'ExpenseTrackerApp' },
       to: [{ email }],
       subject: 'Reset your password',
-      htmlContent: `<p>Click here to reset your password: <a href="http://localhost:3000/password/resetpassword/${id}">Reset Password</a></p>`,
+      htmlContent: `<p>Click here to reset your password: <a href="${resetUrl}">Reset Password</a></p>`,
     });
     res.status(202).json({ message: 'Reset link sent to email', success: true });
   } catch (error) {

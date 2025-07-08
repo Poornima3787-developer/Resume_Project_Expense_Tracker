@@ -3,8 +3,6 @@ const {createOrder,getPaymentStatus} = require("../service/cashfreeService");
 const Payment = require("../models/payment");
 const User=require('../models/user');
 
-
-
 exports.processPayment = async (req, res) => {
                                                                                                                     
   const orderId = "ORDER-" + Date.now();

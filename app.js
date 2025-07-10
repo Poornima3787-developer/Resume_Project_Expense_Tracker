@@ -56,6 +56,7 @@ app.get('/expense', (req, res) => {
 app.get('/forgot-password', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'forgotPassword.html'));
 });
+
 // Routes
 app.use('/user', userRoutes);
 app.use('/expenses', expenseRoutes);

@@ -1,6 +1,11 @@
 const cashfree = Cashfree({ mode: "sandbox" });
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/login";
+    return;
+  }
   await checkPremiumStatus();
   await fetchExpenses();
   await loadDownloadHistory();

@@ -7,14 +7,14 @@ const authenticate=async (req,res,next)=>{
  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ success: false, message: 'Authentication token missing' });
+    return res.redirect('/login');
   }
 
   try {   
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
      const user=await User.findByPk(decoded.userId);
      if (!user) {
-      return res.status(401).json({ success: false, message: 'User not found' });
+      return res.status(401).redirect('/login');
     }
 
      req.user = user;
@@ -23,7 +23,7 @@ const authenticate=async (req,res,next)=>{
   }catch (error) {
   
     
-    res.status(401).json({ success: false});
+    res.status(401).redirect('/login');
   }
 }
 

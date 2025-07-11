@@ -50,7 +50,7 @@ app.get('/signup',(req,res)=>{
 });
 
 app.get('/expense', (req, res) => {
-  res.sendFile(path.join(__dirname, 'view', 'login.html'));
+  res.sendFile(path.join(__dirname, 'view', 'expense.html'));
 });
 
 app.get('/forgot-password', (req, res) => {

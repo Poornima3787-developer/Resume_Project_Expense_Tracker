@@ -1,7 +1,7 @@
 require('dotenv').config();
 const Expense=require('../models/expense');
 const User=require('../models/user');
-const sequelize=require('../utils/db-connection');
+
 const UserServices=require('../service/userservices');
 const S3Service=require('../service/S3services');
 const DownloadedFile = require('../models/downloadedFile');

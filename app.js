@@ -10,7 +10,7 @@ const morgan = require('morgan');
 // DB & Routes
 const connectDB = require('./utils/db-connection');
 const userRoutes = require('./routes/userRoutes');
-// const expenseRoutes = require('./routes/expenseRoutes');
+const expenseRoutes = require('./routes/expenseRoutes');
 // const paymentRoutes = require('./routes/paymentRoutes');
 // const premiumFeaturesRoutes = require('./routes/premiumFeaturesRoutes');
 // const resetpasswordRoutes = require('./routes/resetPasswordRoutes');
@@ -18,7 +18,7 @@ const userRoutes = require('./routes/userRoutes');
 
 // Models
 const User = require('./models/user');
-// const Expense = require('./models/expense');
+const Expense = require('./models/expense');
 // const Payment = require('./models/payment');
 // const ForgotPassword = require('./models/forgotPassword');
 // const DownloadedFile=require('./models/downloadedFile')
@@ -57,15 +57,12 @@ app.get('/forgot-password', (req, res) => {
 });
 // Routes
 app.use('/user', userRoutes);
-// app.use('/expenses', expenseRoutes);
+app.use('/expenses', expenseRoutes);
 // app.use('/', paymentRoutes);
 // app.use('/premium', premiumFeaturesRoutes);
 // app.use('/password', resetpasswordRoutes);
 // app.use('/report', reportRoutes);
 
-// Associations
-// User.hasMany(Expense);
-// Expense.belongsTo(User);
 
 // User.hasMany(Payment);
 // Payment.belongsTo(User);
@@ -73,8 +70,6 @@ app.use('/user', userRoutes);
 // User.hasMany(ForgotPassword);
 // ForgotPassword.belongsTo(User);
 
-// User.hasMany(DownloadedFile);
-// DownloadedFile.belongsTo(User);
 
 app.get('/',(req,res)=>{
   res.send('server is running');

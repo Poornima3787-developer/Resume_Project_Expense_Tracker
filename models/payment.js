@@ -1,30 +1,29 @@
-// const { Sequelize, DataTypes } = require('sequelize');
-// const sequelize=require('../utils/db-connection');
+const mongoose = require('mongoose');
 
-// const Payment = sequelize.define('Payment', {
-//     orderId: {
-//         type: DataTypes.STRING,
-//         allowNull: false,
-//         primaryKey: true
-//     },
-//     paymentSessionId : {
-//         type: DataTypes.STRING,
-//         allowNull: false
-//     },
-//     orderAmount: {
-//         type: DataTypes.FLOAT,
-//         allowNull: false
-//     },
-//     orderCurrency: {
-//         type: DataTypes.STRING,
-//         allowNull: false
-//     },
-//     paymentStatus: {
-//         type: DataTypes.STRING,
-//         allowNull: false,
-//         defaultValue: 'Pending'
-//     }
-// });
+const paymentSchema = new mongoose.Schema({
+  orderId: {
+    type: String,
+    required: true,
+    unique: true 
+  },
+  paymentSessionId: {
+    type: String,
+    required: true
+  },
+  orderAmount: {
+    type: Number,
+    required: true
+  },
+  orderCurrency: {
+    type: String,
+    required: true
+  },
+  paymentStatus: {
+    type: String,
+    required: true,
+    default: 'Pending'
+  }
+})
+module.exports = mongoose.model('Payment', paymentSchema);
 
-// module.exports = Payment;
 

@@ -1,18 +1,18 @@
-// const {DataTypes}=require('sequelize');
-// const sequelize=require('../utils/db-connection');
+const mongoose = require('mongoose');
 
-// const ForgotPassword=sequelize.define('ForgotPassword',{
-//   id:{
-//     type:DataTypes.UUID,
-//     allowNull:false,
-//     primaryKey:true
-//   },
-//   active:DataTypes.BOOLEAN,
-//   expiresby: {
-//   type: DataTypes.DATE,
-//   allowNull: false,
-//   defaultValue: () => new Date(Date.now() + 3600000) 
-// }
-// })
+const forgotPasswordSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    unique: true
+  },
+  active: {
+    type: Boolean,
+    default: true
+  },
+  expiresby: {
+    type: Date,
+    default: () => new Date(Date.now() + 3600000)
+  }
+});
 
-// module.exports=ForgotPassword;
+module.exports = mongoose.model('ForgotPassword', forgotPasswordSchema);

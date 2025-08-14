@@ -1,15 +1,9 @@
-// const {DataTypes}=require('sequelize');
-// const sequelize=require('../utils/db-connection');
+const mongoose=require('mongoose');
 
-// const DownloadedFile=sequelize.define('DownloadedFile',{
-//   fileUrl:{
-//     type:DataTypes.STRING,
-//     allowNull:false,
-//   },
-//   downloadDate:{
-//     type:DataTypes.DATE,
-//     defaultValue:DataTypes.NOW,
-//   }
-// });
+const downloadedFileSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  fileUrl: { type: String, required: true },
+  downloadDate: { type: Date, default: Date.now }
+});
 
-// module.exports=DownloadedFile;
+module.exports = mongoose.model('DownloadedFile', downloadedFileSchema);

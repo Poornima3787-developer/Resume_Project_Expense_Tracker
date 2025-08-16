@@ -10,7 +10,7 @@ function generateAccessToken(id,name){
 const userSignup = async (req, res) => {
     const { name, email, password } = req.body;
     try {
-    const existingUser= await User.findOne({where:{email}});
+    const existingUser= await User.findOne({email});
 
     if (existingUser){
       return res.status(409).json({ message: 'User already exists' });
@@ -35,7 +35,7 @@ const userLogin = async (req ,res) =>{
    const {email,password}=req.body;
 
    try {
-    const user=await User.findOne({where:{email}});
+    const user=await User.findOne({email});
     
     if(!user){
       return res.status(404).json({ message: 'User not found' });
@@ -62,7 +62,7 @@ const userLogin = async (req ,res) =>{
 
 const premiumStatus=async(req,res)=>{
   try{
-  const user=await User.findById(req.user.id).select(isPremium);
+  const user=await User.findById(req.user._id).select("isPremium");
   if (!user) {
       return res.status(404).json({ message: 'User not found' });
   }

@@ -11,7 +11,7 @@ const getExpenses=async (req ,res)=>{
   const limit=+req.query.limit||10;
   const userId=req.user._id;
   try {
-    const totalItems=await Expense.countDocuments({userId});
+    const totalItems=await Expense.countDocuments({user:userId});
     const expenses=await Expense.find({user: userId})
       .skip((page-1)*limit)
       .limit(limit)

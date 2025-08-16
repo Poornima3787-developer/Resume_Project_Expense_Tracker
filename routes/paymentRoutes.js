@@ -4,7 +4,7 @@ const {  processPayment, getPaymentStatus } = require('../controllers/paymentCon
 const authenticate=require('../middleware/auth');
 
 
-// router.post('/pay',authenticate, processPayment);
-// router.get('/payment-status/:paymentSessionId', getPaymentStatus);
+router.post('/pay',authenticate, processPayment);
+router.get('/payment-status/:paymentSessionId', getPaymentStatus);
 
 module.exports = router;

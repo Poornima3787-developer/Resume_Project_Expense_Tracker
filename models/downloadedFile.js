@@ -1,7 +1,7 @@
 const mongoose=require('mongoose');
 
 const downloadedFileSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   fileUrl: { type: String, required: true },
   downloadDate: { type: Date, default: Date.now }
 });

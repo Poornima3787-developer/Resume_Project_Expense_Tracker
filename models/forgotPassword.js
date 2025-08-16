@@ -12,6 +12,11 @@ const forgotPasswordSchema = new mongoose.Schema({
   expiresby: {
     type: Date,
     default: () => new Date(Date.now() + 3600000)
+  },
+  userId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
 });
 

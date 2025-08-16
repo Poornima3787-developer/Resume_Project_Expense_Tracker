@@ -27,7 +27,7 @@ exports.processPayment = async (req, res) => {
       orderAmount,
       orderCurrency,
       paymentStatus: "Pending",
-      UserId:req.user.id
+      UserId:req.user._id
     });
 
     res.json({ paymentSessionId, orderId });
@@ -43,20 +43,20 @@ exports.getPaymentStatus = async (req, res) => {
   console.log(paymentSessionId);
   try {
     const orderStatus = await getPaymentStatus(paymentSessionId);
-   console.log(orderStatus);
-     const order = await Payment.findOne({ where: { orderId:paymentSessionId } } );
-     console.log(order);
+   //console.log(orderStatus);
+     const order = await Payment.findOne({ orderId:paymentSessionId }  );
+    // console.log(order);
      order.paymentStatus  = orderStatus;
      await order.save();
     
     if(orderStatus==='Success'){
-      const user = await User.findByPk(order.UserId);
+      const user = await User.findById(order.UserId);
       if (user) {
     user.isPremium = true;
     await user.save();
   }
      }
-
+    console.log(orderStatus);
     res.json({orderStatus})
    
   } catch (error) {

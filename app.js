@@ -11,17 +11,17 @@ const morgan = require('morgan');
 const connectDB = require('./utils/db-connection');
 const userRoutes = require('./routes/userRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
-// const paymentRoutes = require('./routes/paymentRoutes');
-// const premiumFeaturesRoutes = require('./routes/premiumFeaturesRoutes');
-// const resetpasswordRoutes = require('./routes/resetPasswordRoutes');
-// const reportRoutes = require('./routes/reportRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const premiumFeaturesRoutes = require('./routes/premiumFeaturesRoutes');
+const resetpasswordRoutes = require('./routes/resetPasswordRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 // Models
 const User = require('./models/user');
 const Expense = require('./models/expense');
-// const Payment = require('./models/payment');
-// const ForgotPassword = require('./models/forgotPassword');
-// const DownloadedFile=require('./models/downloadedFile')
+const Payment = require('./models/payment');
+const ForgotPassword = require('./models/forgotPassword');
+const DownloadedFile=require('./models/downloadedFile');
 
 const app = express();
 
@@ -55,21 +55,14 @@ app.get('/expense', (req, res) => {
 app.get('/forgot-password', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'forgotPassword.html'));
 });
+
 // Routes
 app.use('/user', userRoutes);
 app.use('/expenses', expenseRoutes);
-// app.use('/', paymentRoutes);
-// app.use('/premium', premiumFeaturesRoutes);
-// app.use('/password', resetpasswordRoutes);
-// app.use('/report', reportRoutes);
-
-
-// User.hasMany(Payment);
-// Payment.belongsTo(User);
-
-// User.hasMany(ForgotPassword);
-// ForgotPassword.belongsTo(User);
-
+app.use('/', paymentRoutes);
+app.use('/premium', premiumFeaturesRoutes);
+app.use('/password', resetpasswordRoutes);
+app.use('/report', reportRoutes);
 
 app.get('/',(req,res)=>{
   res.send('server is running');

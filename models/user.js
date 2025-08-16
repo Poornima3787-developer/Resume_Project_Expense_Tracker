@@ -20,7 +20,7 @@ const userSchema=new mongoose.Schema({
     },
   total_cost:{
     type:Number,
-    required:true
+    default:0,
   }
 });
 

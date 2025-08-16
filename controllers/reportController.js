@@ -1,31 +1,35 @@
 const Expense=require('../models/expense');
-const { Op } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 const { Parser } = require('json2csv');
 
 exports.getFilteredReport = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
   const filter = req.params.filterType;
   const now = new Date();
 
-  let where = { userId };
+  let query={user:userId};
 
   if (filter === 'daily') {
-    const todayStart = new Date(now.setHours(0, 0, 0, 0));
-    const todayEnd = new Date(now.setHours(23, 59, 59, 999));
-    where.createdAt = { [Op.between]: [todayStart, todayEnd] };
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    query.createdAt = { $gte:todayStart,$lte:todayEnd };
+
   } else if (filter === 'weekly') {
     const startOfWeek = new Date();
     startOfWeek.setDate(now.getDate() - 6); // last 7 days
-    where.createdAt = { [Op.gte]: startOfWeek };
+    query.createdAt = { $gte: startOfWeek };
   } else if (filter === 'monthly') {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    where.createdAt = { [Op.gte]: startOfMonth };
+    query.createdAt = { $gte: startOfMonth };
   }
 
   try {
-    const expenses = await Expense.findAll({ where });
+    const expenses = await Expense.find(query);
     res.status(200).json(expenses);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch report' });
@@ -33,11 +37,11 @@ exports.getFilteredReport = async (req, res) => {
 };
 
 exports.downloadReport = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
 
   try {
-    const expenses = await Expense.findAll({ where: { userId } });
-    const fields = ['id', 'amount', 'description', 'category', 'createdAt'];
+    const expenses = await Expense.find( { user:userId } ).lean();
+    const fields = ['_id', 'amount', 'description', 'category', 'createdAt'];
     const parser = new Parser({ fields });
     const csv = parser.parse(expenses);
 

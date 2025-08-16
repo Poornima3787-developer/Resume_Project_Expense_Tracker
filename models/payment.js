@@ -22,6 +22,11 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 'Pending'
+  },
+  UserId: { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
   }
 })
 module.exports = mongoose.model('Payment', paymentSchema);

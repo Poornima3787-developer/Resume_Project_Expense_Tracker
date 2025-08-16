@@ -39,13 +39,11 @@ exports.processPayment = async (req, res) => {
 
 exports.getPaymentStatus = async (req, res) => {
   
-  const paymentSessionId = req.params.paymentSessionId; 
-  console.log(paymentSessionId);
+  const {orderId}= req.params; 
+
   try {
-    const orderStatus = await getPaymentStatus(paymentSessionId);
-   //console.log(orderStatus);
-     const order = await Payment.findOne({ orderId:paymentSessionId }  );
-    // console.log(order);
+    const orderStatus = await getPaymentStatus(orderId);
+     const order = await Payment.findOne({ orderId}  );
      order.paymentStatus  = orderStatus;
      await order.save();
     
@@ -54,11 +52,10 @@ exports.getPaymentStatus = async (req, res) => {
       if (user) {
     user.isPremium = true;
     await user.save();
+
   }
      }
-    console.log(orderStatus);
-    res.json({orderStatus})
-   
+    res.json({orderStatus})   
   } catch (error) {
     res.status(500).json({ message: "Error fetching payment status" });
   }

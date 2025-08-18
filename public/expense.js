@@ -222,6 +222,7 @@ function showLeaderboard() {
 }
 
 document.getElementById("generate-report").addEventListener("click", async () => {
+  console.log('Daily button clicked');
   const filter = document.getElementById("report-filter").value;
 
   try {

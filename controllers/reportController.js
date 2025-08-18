@@ -6,6 +6,7 @@ const { Parser } = require('json2csv');
 exports.getFilteredReport = async (req, res) => {
   const userId = req.user._id;
   const filter = req.params.filterType;
+
   const now = new Date();
 
   let query={user:userId};
@@ -18,6 +19,7 @@ exports.getFilteredReport = async (req, res) => {
     todayEnd.setHours(23, 59, 59, 999);
 
     query.createdAt = { $gte:todayStart,$lte:todayEnd };
+
 
   } else if (filter === 'weekly') {
     const startOfWeek = new Date();
@@ -41,6 +43,7 @@ exports.downloadReport = async (req, res) => {
 
   try {
     const expenses = await Expense.find( { user:userId } ).lean();
+    console.log("Expenses fetched:", expenses);
     const fields = ['_id', 'amount', 'description', 'category', 'createdAt'];
     const parser = new Parser({ fields });
     const csv = parser.parse(expenses);

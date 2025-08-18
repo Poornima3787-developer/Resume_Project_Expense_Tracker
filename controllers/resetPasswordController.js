@@ -60,7 +60,7 @@ const updatepassword=async (req,res)=>{
     const { newpassword } = req.body;
         const { id } = req.params;
 
-        const resetRequest=await ForgotPassword.findOne({ where : {  id}});
+        const resetRequest=await ForgotPassword.findOne({  id});
         if (!resetRequest) return res.status(404).json({ error: 'Reset request not found' });
 
         const user=await User.findById(resetRequest.userId);
@@ -68,7 +68,7 @@ const updatepassword=async (req,res)=>{
          
        const hashedPassword = await bcrypt.hash(newpassword, 10);
 
-       await user.findByIdAndUpdate(user._id,{ password: hashedPassword });
+       await User.findByIdAndUpdate(user._id,{ password: hashedPassword });
        await ForgotPassword.findOneAndUpdate({id},{ active: false });
        res.status(201).json({ message: 'Password successfully updated' });
   } catch (error) {

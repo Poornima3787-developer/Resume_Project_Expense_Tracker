@@ -5,6 +5,7 @@ const User=require('../models/user');
 const UserServices=require('../service/userservices');
 const S3Service=require('../service/S3services');
 const DownloadedFile = require('../models/downloadedFile');
+const { default: mongoose } = require('mongoose');
 
 const getExpenses=async (req ,res)=>{
   const page=+req.query.page||1;
@@ -43,6 +44,8 @@ const getExpenses=async (req ,res)=>{
 }
 
 const addExpenses=async (req ,res)=>{
+  const session=await mongoose.startSession();
+  session.startTransaction();
   const {amount,description,category,note}=req.body;
 
   if (!amount || !description || !category) {
@@ -52,19 +55,24 @@ const addExpenses=async (req ,res)=>{
   try {
     const newExpense=new Expense({amount,description,category,note,user:req.user._id});
 
-    await newExpense.save();
+    await newExpense.save({session});
 
     const user = await User.findByIdAndUpdate(req.user._id,{
-      $inc:{total_cost:Number(amount)}
-    });
-  
+      $inc:{total_cost:Number(amount)}},{session},
+    );
+     await session.commitTransaction();
+     session.endSession();
      res.status(201).json({ message: 'Expense added', expense: newExpense });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     res.status(500).json({ message: 'Internal server error' });
   }
 }
 
 const deleteExpenses=async (req ,res) =>{
+  const session = await mongoose.startSession();
+  session.startTransaction();
   const expenseId=req.params.id;
 
   if (!expenseId) {
@@ -74,20 +82,23 @@ const deleteExpenses=async (req ,res) =>{
   try {
     const expense = await Expense.findOne({
        _id: expenseId, user: req.user._id 
-    });
+    }).session(session);
 
      if (!expense) {
       return res.status(404).json({ message: 'Expense not found or unauthorized' });
     }
 
-     await expense.deleteOne();
+     await expense.deleteOne({session});
 
      await User.findByIdAndUpdate(req.user._id,{
       $inc:{total_cost:-Number(expense.amount)}
-     });
-
+     },{session});
+    await session.commitTransaction();
+    session.endSession();
     res.status(200).json({ message: 'Expense deleted successfully' });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     res.status(500).json({ message: 'Error deleting expense' });
   }
 }
